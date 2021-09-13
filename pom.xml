@@ -2,14 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     
-    <groupId>uk.gov.service.notify</groupId>
-    <artifactId>notifications-java-client</artifactId>
-    <version>3.17.2-RELEASE</version>
+    <groupId>gov.va.vanotify</groupId>
+    <artifactId>vanotify-java-client</artifactId>
+    <version>1.0.0-RELEASE</version>
     <packaging>jar</packaging>
     
-    <name>GOV.UK Notify Java client</name>
-    <description>Use this client to send emails, text messages and letters using the GOV.UK Notify API.</description>
-    <url>http://www.notifications.service.gov.uk</url>
+    <name>VANotify Java client</name>
+    <description>Use this client to send emails and text messages using the VANotify API.</description>
+    <url>http://notifications.va.gov</url>
 
     <licenses>
         <license>
@@ -20,17 +20,17 @@
 
     <developers>
         <developer>
-            <name>GOV.UK Notify Team</name>
-            <url>http://www.notifications.service.gov.uk/support</url>
-            <organization>Government Digital Service</organization>
-            <organizationUrl>https://www.gov.uk/government/organisations/government-digital-service</organizationUrl>
+            <name>VANotify Team</name>
+            <url>http://notifications.va.gov</url>
+            <organization>U.S. Department of Veterans Affairs</organization>
+            <organizationUrl>https://www.va.gov</organizationUrl>
         </developer>
     </developers>
     
     <scm>
-        <connection>scm:git:git://github.com/alphagov/notifications-java-client.git</connection>
-        <developerConnection>scm:git:ssh://github.com:alphagov/notifications-java-client.git</developerConnection>
-        <url>http://github.com/alphagov/notifications-java-client/tree/master</url>
+        <connection>scm:git:git://github.com/department-of-veterans-affairs/notifications-java-client.git</connection>
+        <developerConnection>scm:git:ssh://github.com/department-of-veterans-affairs/notifications-java-client.git</developerConnection>
+        <url>http://github.com/department-of-veterans-affairs/notifications-java-client/tree/master</url>
     </scm>
     
     <properties>
@@ -89,13 +89,10 @@
         </dependency>
     </dependencies>
     <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
         <repository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/department-of-veterans-affairs/notifications-java-client</url>
         </repository>
     </distributionManagement>
     <build>
@@ -158,39 +155,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                        <configuration>
-                            <keyname>6C83F0C698B034FAAAD07127FC05486C1A0F431A</keyname>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.7</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                    <!--
-                        set autoReleaseAfterClose to false if you want to push to maven's
-                        staging area but not release the package. For details see
-                        https://central.sonatype.org/pages/releasing-the-deployment.html
-                    -->
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

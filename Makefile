@@ -22,7 +22,7 @@ integration-test: ## Run integration tests
 
 .PHONY: bootstrap-with-docker
 bootstrap-with-docker: ## Prepare the Docker builder image
-	docker build -t notifications-java-client .
+	docker build -t vanotify-java-client .
 	./scripts/run_with_docker.sh make bootstrap
 
 .PHONY: test-with-docker

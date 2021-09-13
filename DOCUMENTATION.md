@@ -1,41 +1,41 @@
 # Java client documentation
 
-This documentation is for developers interested in using the GOV.UK Notify Java client to send emails, text messages or letters.
+This documentation is for developers interested in using the VANotify Java client to send emails, text messages or letters.
 
 ## Set up the client
 
 ### Install the client
 
-The `notifications-java-client` deploys to Maven Central.
+The `vanotify-java-client` artifacts are stored in github packages.
 
-Go to the [GOV.UK Notify Java client page on Maven Central](https://search.maven.org/artifact/uk.gov.service.notify/notifications-java-client) [external link]:
+Go to the [VANotify Java client maven packages on github](https://maven.pkg.github.com/department-of-veterans-affairs/notifications-java-client) [external link]:
 
 1. Select the most recent version.
 1. Copy the dependency configuration snippet for your build tool.
 
-Refer to the [client changelog](https://github.com/alphagov/notifications-java-client/blob/master/CHANGELOG.md) for the version number and the latest updates.
+Refer to the [client changelog](https://github.com/department-of-veterans-affairs/notifications-java-client/blob/master/CHANGELOG.md) for the version number and the latest updates.
 
 ### Create a new instance of the client
 
 Add this code to your application:
 
 ```java
-import uk.gov.service.notify.NotificationClient;
+import gov.va.vanotify.NotificationClient;
 NotificationClient client = new NotificationClient(apiKey);
 ```
 
-To get an API key, [sign in to GOV.UK Notify](https://www.notifications.service.gov.uk/sign-in) and go to the __API integration__ page. You can find more information in the [API keys](#api-keys) section of this documentation.
+To get an API key, [sign in to VANotify](https://notifications.va.gov) and go to the __API integration__ page. You can find more information in the [API keys](#api-keys) section of this documentation.
 
 If you use a proxy you can pass it into the NotificationClient constructor.
 
 ```java
-import uk.gov.service.notify.NotificationClient;
+import gov.va.vanotify.NotificationClient;
 NotificationClient client = new NotificationClient(apiKey, proxy);
 ```
 
 ## Send a message
 
-You can use GOV.UK Notify to send text messages, emails and letters.
+You can use VANotify to send text messages and emails.
 
 ### Send a text message
 
@@ -47,7 +47,8 @@ SendSmsResponse response = client.sendSms(
     phoneNumber,
     personalisation,
     reference,
-    smsSenderId
+    smsSenderId,
+    billingCode
 );
 ```
 
@@ -57,7 +58,7 @@ SendSmsResponse response = client.sendSms(
 
 To find the template ID:
 
-1. [Sign in to GOV.UK Notify](https://www.notifications.service.gov.uk/sign-in).
+1. [Sign in to VANotify](https://notifications.va.gov).
 1. Go to the __Templates__ page and select the relevant template.
 1. Select __Copy template ID to clipboard__.
 
@@ -69,10 +70,10 @@ String templateId="f33517ff-2a88-4f6e-b855-c550268ce08a";
 
 ##### phoneNumber (required)
 
-The phone number of the recipient of the text message. This number can be a UK or international number.
+The phone number of the recipient of the text message. This number can be a US or international number.
 
 ```
-String phoneNumber="+447900900123";
+String phoneNumber="+16132532222";
 ```
 
 ##### personalisation (required)
@@ -102,9 +103,7 @@ A unique identifier of the sender of the text message notification.
 
 To find the text message sender:
 
-1. [Sign in to GOV.UK Notify](https://www.notifications.service.gov.uk/sign-in).
-1. Go to the __Settings__ page.
-1. In the __Text Messages__ section, select __Manage__ on the __Text Message sender__ row.
+1. [Sign in to VANotify](https://notifications.va.gov).
 
 You can then either:
 
@@ -115,8 +114,18 @@ You can then either:
 String smsSenderId='8e222534-7f05-4972-86e3-17c5d9f894e2'
 ```
 
-
 You can leave out this argument if your service only has one text message sender, or if you want to use the default sender.
+
+##### billingCode (optional)
+
+A string that represents a billing code under which a notification will be reported.
+This can be used to group notifications of the same template in billing reports.
+
+```
+String billingCode='some-billing-code'
+```
+
+You can leave out this argument if you don't need to group notifications with billing codes.
 
 #### Response
 
@@ -130,6 +139,7 @@ int templateVersion;
 String templateUri;
 String body;
 Optional<String> fromNumber;
+Optional<String> billingCode;
 ```
 
 If you are using the [test API key](#test), all your messages come back with a `delivered` status.
@@ -143,7 +153,7 @@ If the request is not successful, the client returns a `NotificationClientExcept
 |httpResult|Message|How to fix|
 |:---|:---|:---|
 |`400`|`[{`<br>`"error": "BadRequestError",`<br>`"message": "Can't send to this recipient using a team-only API key"`<br>`}]`|Use the correct type of [API key](#api-keys)|
-|`400`|`[{`<br>`"error": "BadRequestError",`<br>`"message": "Can't send to this recipient when service is in trial mode - see https://www.notifications.service.gov.uk/trial-mode"`<br>`}]`|Your service cannot send this notification in [trial mode](https://www.notifications.service.gov.uk/features/using-notify#trial-mode)|
+|`400`|`[{`<br>`"error": "BadRequestError",`<br>`"message": "Can't send to this recipient when service is in trial mode - see https://notifications.va.gov"`<br>`}]`|Your service cannot send this notification in trial mode|
 |`403`|`[{`<br>`"error": "AuthError",`<br>`"message": "Error: Your system clock must be accurate to within 30 seconds"`<br>`}]`|Check your system clock|
 |`403`|`[{`<br>`"error": "AuthError",`<br>`"message": "Invalid token: API key not found"`<br>`}]`|Use the correct API key. Refer to [API keys](#api-keys) for more information|
 |`429`|`[{`<br>`"error": "RateLimitError",`<br>`"message": "Exceeded rate limit for key type TEAM/TEST/LIVE of 3000 requests per 60 seconds"`<br>`}]`|Refer to [API rate limits](#rate-limits) for more information|
@@ -160,7 +170,8 @@ SendEmailResponse response = client.sendEmail(
     emailAddress,
     personalisation,
     reference,
-    emailReplyToId
+    emailReplyToId,
+    billingCode
 );
 ```
 
@@ -171,7 +182,7 @@ SendEmailResponse response = client.sendEmail(
 
 To find the template ID:
 
-1. [Sign in to GOV.UK Notify](https://www.notifications.service.gov.uk/sign-in).
+1. [Sign in to VANotify](https://notifications.va.gov).
 1. Go to the __Templates__ page and select the relevant template.
 1. Select __Copy template ID to clipboard__.
 
@@ -216,7 +227,7 @@ This is an email address specified by you to receive replies from your users. Yo
 
 To add a reply-to email address:
 
-1. [Sign in to GOV.UK Notify](https://www.notifications.service.gov.uk/sign-in).
+1. [Sign in to VANotify](https://notifications.va.gov).
 1. Go to the __Settings__ page.
 1. In the __Email__ section, select __Manage__ on the __Reply-to email addresses__ row.
 1. Select __Add reply-to address__.
@@ -227,6 +238,17 @@ String emailReplyToId='8e222534-7f05-4972-86e3-17c5d9f894e2'
 ```
 
 You can leave out this argument if your service only has one reply-to email address, or you want to use the default email address.
+
+##### billingCode (optional)
+
+A string that represents a billing code under which a notification will be reported.
+This can be used to group notifications of the same template in billing reports.
+
+```
+String billingCode='some-billing-code'
+```
+
+You can leave out this argument if you don't need to group notifications with billing codes.
 
 #### Response
 
@@ -241,6 +263,7 @@ String templateUri;
 String body;
 String subject;
 Optional<String> fromEmail;
+Optional<String> billingCode;
 ```
 
 #### Error codes
@@ -250,7 +273,7 @@ If the request is not successful, the client returns a `NotificationClientExcept
 |httpResult|Message|How to fix|
 |:--- |:---|:---|
 |`400`|`[{`<br>`"error": "BadRequestError",`<br>`"message": "Can't send to this recipient using a team-only API key"`<br>`}]`|Use the correct type of [API key](#api-keys)|
-|`400`|`[{`<br>`"error": "BadRequestError",`<br>`"message": "Can't send to this recipient when service is in trial mode - see https://www.notifications.service.gov.uk/trial-mode"`<br>`}]`|Your service cannot send this notification in [trial mode](https://www.notifications.service.gov.uk/features/using-notify#trial-mode)|
+|`400`|`[{`<br>`"error": "BadRequestError",`<br>`"message": "Can't send to this recipient when service is in trial mode - see https://notifications.va.gov/trial-mode"`<br>`}]`|Your service cannot send this notification in [trial mode](https://notifications.va.gov/features/using-notify#trial-mode)|
 |`403`|`[{`<br>`"error": "AuthError",`<br>`"message": "Error: Your system clock must be accurate to within 30 seconds"`<br>`}]`|Check your system clock|
 |`403`|`[{`<br>`"error": "AuthError",`<br>`"message": "Invalid token: API key not found"`<br>`}]`|Use the correct API key. Refer to [API keys](#api-keys) for more information|
 |`429`|`[{`<br>`"error": "RateLimitError",`<br>`"message": "Exceeded rate limit for key type TEAM/TEST/LIVE of 3000 requests per 60 seconds"`<br>`}]`|Refer to [API rate limits](#rate-limits) for more information|
@@ -263,18 +286,11 @@ To send a file by email, add a placeholder to the template then upload a file. T
 
 The file will be available for the recipient to download for 18 months.
 
-The links are unique and unguessable. GOV.UK Notify cannot access or decrypt your file.
-
-#### Add contact details to the file download page
-
-1. [Sign in to GOV.UK Notify](https://www.notifications.service.gov.uk/sign-in).
-1. Go to the __Settings__ page.
-1. In the __Email__ section, select __Manage__ on the __Send files by email__ row.
-1. Enter the contact details you want to use, and select __Save__.
+The links are unique and unguessable. VANotify cannot access or decrypt your file.
 
 #### Add a placeholder to the template
 
-1. [Sign in to GOV.UK Notify](https://www.notifications.service.gov.uk/sign-in).
+1. [Sign in to VANotify](https://notifications.va.gov).
 1. Go to the __Templates__ page and select the relevant email template.
 1. Select __Edit__.
 1. Add a placeholder to the email template using double brackets. For example:
@@ -283,7 +299,7 @@ The links are unique and unguessable. GOV.UK Notify cannot access or decrypt you
 
 #### Upload your file
 
-You can upload PDF, CSV, .odt, .txt, .rtf, .xlsx and MS Word Document files. Your file must be smaller than 2MB. [Contact the GOV.UK Notify team](https://www.notifications.service.gov.uk/support/ask-question-give-feedback) if you need to send other file types.
+You can upload PDF, CSV, .odt, .txt, .rtf, .xlsx and MS Word Document files. Your file must be smaller than 2MB. [Contact the VANotify team](https://github.com/department-of-veterans-affairs/notification-api) if you need to send other file types.
 
 1. Convert the PDF to a `byte[]`.
 1. Pass the `byte[]` to the personalisation argument.
@@ -330,220 +346,16 @@ If the request is not successful, the client returns an `HTTPError` containing t
 |error.status_code|error.message|How to fix|
 |:---|:---|:---|
 |`400`|`[{`<br>`"error": "BadRequestError",`<br>`"message": "Can't send to this recipient using a team-only API key"`<br>`}]`|Use the correct type of [API key](#api-keys)|
-|`400`|`[{`<br>`"error": "BadRequestError",`<br>`"message": "Can't send to this recipient when service is in trial mode - see https://www.notifications.service.gov.uk/trial-mode"`<br>`}]`|Your service cannot send this notification in [trial mode](https://www.notifications.service.gov.uk/features/using-notify#trial-mode)|
+|`400`|`[{`<br>`"error": "BadRequestError",`<br>`"message": "Can't send to this recipient when service is in trial mode - see https://notifications.va.gov"`<br>`}]`|Your service cannot send this notification in trial mode|
 |`400`|`[{`<br>`"error": "BadRequestError",`<br>`"message": "Unsupported file type '(FILE TYPE)'. Supported types are: '(ALLOWED TYPES)'"`<br>`}]`|Wrong file type. You can only upload .pdf, .csv, .txt, .doc, .docx, .xlsx, .rtf or .odt files|
 |`400`|`[{`<br>`"error": "BadRequestError",`<br>`"message": "File did not pass the virus scan"`<br>`}]`|The file contains a virus|
-|`400`|`[{`<br>`"error": "BadRequestError",`<br>`"message": "Send files by email has not been set up - add contact details for your service at https://www.notifications.service.gov.uk/services/(SERVICE ID)/service-settings/send-files-by-email"`<br>`}]`|See how to [add contact details to the file download page](#add-contact-details-to-the-file-download-page)|
+|`400`|`[{`<br>`"error": "BadRequestError",`<br>`"message": "Send files by email has not been set up - add contact details for your service at https://notifications.va.gov"`<br>`}]`|See how to [add contact details to the file download page](#add-contact-details-to-the-file-download-page)|
 |`403`|`[{`<br>`"error": "AuthError",`<br>`"message": "Error: Your system clock must be accurate to within 30 seconds"`<br>`}]`|Check your system clock|
 |`403`|`[{`<br>`"error": "AuthError",`<br>`"message": "Invalid token: API key not found"`<br>`}]`|Use the correct type of [API key](#api-keys)|
 |`413`|`File is larger than 2MB`|The file is too big. Files must be smaller than 2MB|
 |`429`|`[{`<br>`"error": "RateLimitError",`<br>`"message": "Exceeded rate limit for key type TEAM/TEST/LIVE of 3000 requests per 60 seconds"`<br>`}]`|Refer to [API rate limits](#rate-limits) for more information|
 |`429`|`[{`<br>`"error": "TooManyRequestsError",`<br>`"message": "Exceeded send limits (LIMIT NUMBER) for today"`<br>`}]`|Refer to [service limits](#daily-limits) for the limit number|
 |`500`|`[{`<br>`"error": "Exception",`<br>`"message": "Internal server error"`<br>`}]`|Notify was unable to process the request, resend your notification.|
-
-### Send a letter
-
-When you add a new service it will start in [trial mode](https://www.notifications.service.gov.uk/features/trial-mode). You can only send letters when your service is live.
-
-To send Notify a request to go live:
-
-1. [Sign in to GOV.UK Notify](https://www.notifications.service.gov.uk/sign-in).
-1. Go to the __Settings__ page.
-1. In the __Your service is in trial mode__ section, select __request to go live__.
-
-#### Method
-
-```java
-SendLetterResponse response = client.sendLetter(
-    templateId,
-    personalisation,
-    reference
-);
-```
-
-#### Arguments
-
-##### templateId (required)
-
-To find the template ID:
-
-1. [Sign in to GOV.UK Notify](https://www.notifications.service.gov.uk/sign-in).
-1. Go to the __Templates__ page and select the relevant template.
-1. Select __Copy template ID to clipboard__.
-
-For example:
-
-```
-String templateId = "f33517ff-2a88-4f6e-b855-c550268ce08a";
-```
-
-##### personalisation (required)
-
-The personalisation argument always contains the following parameters for the letter recipient’s address:
-
-- `address_line_1`
-- `address_line_2`
-- `address_line_3`
-- `address_line_4`
-- `address_line_5`
-- `address_line_6`
-- `address_line_7`
-
-The address must have at least 3 lines.
-
-The last line needs to be a real UK postcode or the name of a country outside the UK.
-
-Notify checks for international addresses and will automatically charge you the correct postage.
-
-The `postcode` personalisation argument has been replaced. If your template still uses `postcode`, Notify will treat it as the last line of the address.
-
-Any other placeholder fields included in the letter template also count as required parameters. You must provide their values in a map. For example:
-
-```java
-Map<String, Object> personalisation = new HashMap<>();
-personalisation.put("address_line_1", "The Occupier"); // mandatory address field
-personalisation.put("address_line_2", "Flat 2"); // mandatory address field
-personalisation.put("address_line_3", "SW14 6BH"); // mandatory address field, must be a real UK postcode
-personalisation.put("first_name", "Amala"); // field from template
-personalisation.put("application_date", "2018-01-01"); // field from template
-personalisation.put("list", listOfItems); // Will appear as a bulleted list in the message
-```
-
-If a template does not have any placeholder fields for personalised information, you must pass in an empty map or `null`.
-
-##### reference (required)
-
-A unique identifier you create. This reference identifies a single unique notification or a batch of notifications. It must not contain any personal information such as name or postal address. If you do not have a reference, you must pass in an empty string or `null`.
-
-```
-String reference='STRING';
-```
-
-#### Response
-
-If the request to the client is successful, the client returns a `SendLetterResponse`:
-
-```java
-UUID notificationId;
-Optional<String> reference;
-UUID templateId;
-int templateVersion;
-String templateUri;
-String body;
-String subject;
-```
-
-#### Error codes
-
-If the request is not successful, the client returns a `NotificationClientException` containing the relevant error code:
-
-|httpResult|Message|How to fix|
-|:--- |:---|:---|
-|`400`|`[{`<br>`"error": "BadRequestError",`<br>`"message": "Cannot send letters with a team api key"`<br>`}]`|Use the correct type of [API key](#api-keys).|
-|`400`|`[{`<br>`"error": "BadRequestError",`<br>`"message": "Cannot send letters when service is in trial mode - see https://www.notifications.service.gov.uk/trial-mode"`<br>`}]`|Your service cannot send this notification in [trial mode](https://www.notifications.service.gov.uk/features/using-notify#trial-mode).|
-|`400`|`[{`<br>`"error": "ValidationError",`<br>`"message": "personalisation address_line_1 is a required property"`<br>`}]`|Ensure that your template has a field for the first line of the address, refer to [personalisation](#send-a-letter-arguments-personalisation-required) for more information.|
-|`400`|`[{`<br>`"error": "ValidationError",`<br>`"message": "Must be a real UK postcode"`<br>`}]`|Ensure that the value for the last line of the address is a real UK postcode.|
-|`400`|`[{`<br>`"error": "ValidationError",`<br>`"message": "Last line of address must be a real UK postcode or another country"`<br>`}]`|Ensure that the value for the last line of the address is a real UK postcode or the name of a country outside the UK.|
-|`403`|`[{`<br>`"error": "AuthError",`<br>`"message": "Error: Your system clock must be accurate to within 30 seconds"`<br>`}]`|Check your system clock.|
-|`403`|`[{`<br>`"error": "AuthError",`<br>`"message": "Invalid token: API key not found"`<br>`}]`|Use the correct API key. Refer to [API keys](#api-keys) for more information.|
-|`429`|`[{`<br>`"error": "RateLimitError",`<br>`"message": "Exceeded rate limit for key type TEAM/TEST/LIVE of 3000 requests per 60 seconds"`<br>`}]`|Refer to [API rate limits](#rate-limits) for more information.|
-|`429`|`[{`<br>`"error": "TooManyRequestsError",`<br>`"message": "Exceeded send limits (LIMIT NUMBER) for today"`<br>`}]`|Refer to [service limits](#daily-limits) for the limit number.|
-|`500`|`[{`<br>`"error": "Exception",`<br>`"message": "Internal server error"`<br>`}]`|Notify was unable to process the request, resend your notification.|
-
-
-### Send a precompiled letter
-
-#### Method
-
-```java
-LetterResponse response = client.sendPrecompiledLetter(
-    reference,
-    precompiledPDFAsFile
-    );
-```
-
-```java
-LetterResponse response = client.sendPrecompiledLetterWithInputStream(
-    reference,
-    precompiledPDFAsInputStream
-    );
-```
-```java
-LetterResponse response = client.sendPrecompiledLetter(
-    reference,
-    precompiledPDFAsFile,
-    postage
-    );
-```
-
-```java
-LetterResponse response = client.sendPrecompiledLetterWithInputStream(
-    reference,
-    precompiledPDFAsInputStream,
-    postage
-    );
-```
-
-#### Arguments
-
-##### reference (required)
-
-A unique identifier you create. This reference identifies a single unique notification or a batch of notifications. It must not contain any personal information such as name or postal address.
-
-```
-String reference="STRING";
-```
-
-##### precompiledPDFAsFile (required for the sendPrecompiledLetter method)
-
-The precompiled letter must be a PDF file which meets [the GOV.UK Notify letter specification](https://www.notifications.service.gov.uk/using-notify/guidance/letter-specification).
-
-This argument adds the precompiled letter PDF file to a Java file object. The method sends this Java file object to GOV.UK Notify.
-
-```java
-File precompiledPDF = new File("<PDF file path>");
-```
-
-##### precompiledPDFAsInputStream (required for the sendPrecompiledLetterWithInputStream method)
-
-The precompiled letter must be an InputStream. This argument adds the precompiled letter PDF content to a Java InputStream object. The method sends this InputStream to GOV.UK Notify.
-
-```java
-InputStream precompiledPDFAsInputStream = new FileInputStream(pdfContent);
-```
-
-##### postage (optional)
-
-You can choose first or second class postage for your precompiled letter. Set the value to first for first class, or second for second class. If you do not pass in this argument, the postage will default to second class.
-
-#### Response
-
-If the request to the client is successful, the client returns a `LetterResponse`:
-
-```java
-UUID notificationId;
-String reference;
-String postage
-```
-
-#### Error codes
-
-If the request is not successful, the client returns a `NotificationClientException` containing the relevant error code:
-
-|httpResult|Message|How to fix|
-|:--- |:---|:---|
-|`400`|`[{`<br>`"error": "BadRequestError",`<br>`"message": "Cannot send letters with a team api key"`<br>`}]`|Use the correct type of [API key](#api-keys)|
-|`400`|`[{`<br>`"error": "BadRequestError",`<br>`"message": "Cannot send letters when service is in trial mode - see https://www.notifications.service.gov.uk/trial-mode"`<br>`}]`|Your service cannot send this notification in [trial mode](https://www.notifications.service.gov.uk/features/using-notify#trial-mode)|
-|`400`|`[{`<br>`"error": "ValidationError",`<br>`"message": "personalisation address_line_1 is a required property"`<br>`}]`|Send a valid PDF file|
-|`400`|`[{`<br>`"error": "ValidationError",`<br>`"message": "reference is a required property"`<br>`}]`|Add a reference argument to the method call|
-|`400`|`[{`<br>`"error": "ValidationError",`<br>`"message": "postage invalid. It must be either first or second. "`<br>`}]`|Change the value of postage argument in the method call to either 'first' or 'second'|
-|`403`|`[{`<br>`"error": "AuthError",`<br>`"message": "Error: Your system clock must be accurate to within 30 seconds"`<br>`}]`|Check your system clock|
-|`403`|`[{`<br>`"error": "AuthError",`<br>`"message": "Invalid token: API key not found"`<br>`}]`|Use the correct API key. Refer to [API keys](#api-keys) for more information|
-|`429`|`[{`<br>`"error": "RateLimitError",`<br>`"message": "Exceeded rate limit for key type TEAM/TEST/LIVE of 3000 requests per 60 seconds"`<br>`}]`|Refer to [API rate limits](#rate-limits) for more information|
-|`429`|`[{`<br>`"error": "TooManyRequestsError",`<br>`"message": "Exceeded send limits (LIMIT NUMBER) for today"`<br>`}]`|Refer to [service limits](#daily-limits) for the limit number|
-|`400`|`"message":"precompiledPDF must be a valid PDF file"`|Send a valid PDF file|
-|`400`|`"message":"reference cannot be null or empty"`|Populate the reference parameter|
-|`400`|`"message":"precompiledPDF cannot be null or empty"`|Send a PDF file with data in it|
 
 ## Get message status
 
@@ -565,7 +377,7 @@ Notification notification = client.getNotificationById(notificationId);
 The ID of the notification. To find the notification ID, you can either:
 
 * check the response to the [original notification method call](#response)
-* [sign in to GOV.UK Notify](https://www.notifications.service.gov.uk/sign-in) and go to the __API integration__ page
+* [sign in to VANotify](https://notifications.va.gov) and go to the __API integration__ page
 
 #### Response
 
@@ -596,6 +408,7 @@ Optional<DateTime> sentAt;
 Optional<DateTime> completedAt;
 Optional<DateTime> estimatedDelivery;
 Optional<String> createdByName;
+Optional<String> billingCode;
 ```
 
 #### Error codes
@@ -641,8 +454,6 @@ You can filter by each:
 
 * [email status](#email-status-descriptions)
 * [text message status](#text-message-status-descriptions)
-* [letter status](#letter-status-descriptions)
-* [precompiled letter status](#precompiled-letter-status-descriptions)
 
 You can leave out this argument to ignore this filter.
 
@@ -652,7 +463,6 @@ You can filter by:
 
 * `email`
 * `sms`
-* `letter`
 
 ##### reference (optional)
 
@@ -688,8 +498,8 @@ If the request is not successful, the client returns a `NotificationClientExcept
 
 |httpResult|Message|How to fix|
 |:---|:---|:---|
-|`400`|`[{`<br>`"error": "ValidationError",`<br>`"message": "bad status is not one of [created, sending, sent, delivered, pending, failed, technical-failure, temporary-failure, permanent-failure, accepted, received]"`<br>`}]`|Contact the GOV.UK Notify team|
-|`400`|`[{`<br>`"error": "ValidationError",`<br>`"message": "Applet is not one of [sms, email, letter]"`<br>`}]`|Contact the GOV.UK Notify team|
+|`400`|`[{`<br>`"error": "ValidationError",`<br>`"message": "bad status is not one of [created, sending, sent, delivered, pending, failed, technical-failure, temporary-failure, permanent-failure, accepted, received]"`<br>`}]`|Contact the VANotify team|
+|`400`|`[{`<br>`"error": "ValidationError",`<br>`"message": "Applet is not one of [sms, email, letter]"`<br>`}]`|Contact the VANotify team|
 |`403`|`[{`<br>`"error": "AuthError",`<br>`"message": "Error: Your system clock must be accurate to within 30 seconds"`<br>`}]`|Check your system clock|
 |`403`|`[{`<br>`"error": "AuthError",`<br>`"message": "Invalid token: API key not found"`<br>`}]`|Use the correct API key. Refer to [API keys](#api-keys) for more information|
 
@@ -697,8 +507,8 @@ If the request is not successful, the client returns a `NotificationClientExcept
 
 |Status|Description|
 |:---|:---|
-|#`created`|GOV.UK Notify has placed the message in a queue, ready to be sent to the provider. It should only remain in this state for a few seconds.|
-|#`sending`|GOV.UK Notify has sent the message to the provider. The provider will try to deliver the message to the recipient for up to 72 hours. GOV.UK Notify is waiting for delivery information.|
+|#`created`|VANotify has placed the message in a queue, ready to be sent to the provider. It should only remain in this state for a few seconds.|
+|#`sending`|VANotify has sent the message to the provider. The provider will try to deliver the message to the recipient for up to 72 hours. VANotify is waiting for delivery information.|
 |#`delivered`|The message was successfully delivered.|
 |#`permanent-failure`|The provider could not deliver the message because the email address was wrong. You should remove these email addresses from your database.|
 |#`temporary-failure`|The provider could not deliver the message. This can happen when the recipient’s inbox is full or their anti-spam filter rejects your email. [Check your content does not look like spam](https://www.gov.uk/service-manual/design/sending-emails-and-text-messages#protect-your-users-from-spam-and-phishing) before you try to send the message again.|
@@ -708,76 +518,14 @@ If the request is not successful, the client returns a `NotificationClientExcept
 
 |Status|Description|
 |:---|:---|
-|#`created`|GOV.UK Notify has placed the message in a queue, ready to be sent to the provider. It should only remain in this state for a few seconds.|
-|#`sending`|GOV.UK Notify has sent the message to the provider. The provider will try to deliver the message to the recipient for up to 72 hours. GOV.UK Notify is waiting for delivery information.|
-|#`pending`|GOV.UK Notify is waiting for more delivery information.<br>GOV.UK Notify received a callback from the provider but the recipient’s device has not yet responded. Another callback from the provider determines the final status of the text message.|
-|#`sent`|The message was sent to an international number. The mobile networks in some countries do not provide any more delivery information. The GOV.UK Notify website displays this status as 'Sent to an international number'.|
+|#`created`|VANotify has placed the message in a queue, ready to be sent to the provider. It should only remain in this state for a few seconds.|
+|#`sending`|VANotify has sent the message to the provider. The provider will try to deliver the message to the recipient for up to 72 hours. VANotify is waiting for delivery information.|
+|#`pending`|VANotify is waiting for more delivery information.<br>VANotify received a callback from the provider but the recipient’s device has not yet responded. Another callback from the provider determines the final status of the text message.|
+|#`sent`|The message was sent to an international number. The mobile networks in some countries do not provide any more delivery information. The VANotify website displays this status as 'Sent to an international number'.|
 |#`delivered`|The message was successfully delivered.|
-|#`permanent-failure`|The provider could not deliver the message. This can happen if the phone number was wrong or if the network operator rejects the message. If you’re sure that these phone numbers are correct, you should [contact GOV.UK Notify support](https://www.notifications.service.gov.uk/support). If not, you should remove them from your database. You’ll still be charged for text messages that cannot be delivered.
+|#`permanent-failure`|The provider could not deliver the message. This can happen if the phone number was wrong or if the network operator rejects the message. If you’re sure that these phone numbers are correct, you should [contact VANotify support](https://notifications.va.gov/support). If not, you should remove them from your database. You’ll still be charged for text messages that cannot be delivered.
 |#`temporary-failure`|The provider could not deliver the message. This can happen when the recipient’s phone is off, has no signal, or their text message inbox is full. You can try to send the message again. You’ll still be charged for text messages to phones that are not accepting messages.|
 |#`technical-failure`|Your message was not sent because there was a problem between Notify and the provider.<br>You’ll have to try sending your messages again. You will not be charged for text messages that are affected by a technical failure.|
-
-### Letter status descriptions
-
-|Status|Description|
-|:---|:---|
-|#`accepted`|GOV.UK Notify has sent the letter to the provider to be printed.|
-|#`received`|The provider has printed and dispatched the letter.|
-|#`cancelled`|Sending cancelled. The letter will not be printed or dispatched.|
-|#`technical-failure`|GOV.UK Notify had an unexpected error while sending the letter to our printing provider.|
-|#`permanent-failure`|The provider cannot print the letter. Your letter will not be dispatched.|
-
-### Precompiled letter status descriptions
-
-|Status|Description|
-|:---|:---|
-|#`accepted`|GOV.UK Notify has sent the letter to the provider to be printed.|
-|#`received`|The provider has printed and dispatched the letter.|
-|#`cancelled`|Sending cancelled. The letter will not be printed or dispatched.|
-|#`pending-virus-check`|GOV.UK Notify has not completed a virus scan of the precompiled letter file.|
-|#`virus-scan-failed`|GOV.UK Notify found a potential virus in the precompiled letter file.|
-|#`validation-failed`|Content in the precompiled letter file is outside the printable area. See the [GOV.UK Notify letter specification](https://www.notifications.service.gov.uk/using-notify/guidance/letter-specification) for more information.|
-|#`technical-failure`|GOV.UK Notify had an unexpected error while sending the letter to our printing provider.|
-|#`permanent-failure`|The provider cannot print the letter. Your letter will not be dispatched.|
-
-### Get a PDF for a letter notification
-
-#### Method
-
-This returns the PDF contents of a letter notification.
-
-```java
-byte[] pdfFile = client.getPdfForLetter(notificationId)
-```
-
-#### Arguments
-
-##### notificationId (required)
-
-The ID of the notification. To find the notification ID, you can either:
-
-* check the response to the [original notification method call](#get-the-status-of-one-message-response)
-* [sign in to GOV.UK Notify](https://www.notifications.service.gov.uk/sign-in) and go to the __API integration__ page
-
-#### Response
-
-If the request to the client is successful, the client will return a `byte[]` object containing the raw PDF data.
-
-#### Error codes
-
-If the request is not successful, the client returns a `NotificationClientException` containing the relevant error code:
-
-|error.status_code|error.message|How to fix|
-|:---|:---|:---|
-|`400`|`[{`<br>`"error": "ValidationError",`<br>`"message": "id is not a valid UUID"`<br>`}]`|Check the notification ID|
-|`400`|`[{`<br>`"error": "PDFNotReadyError",`<br>`"message": "PDF not available yet, try again later"`<br>`}]`|Wait for the notification to finish processing. This usually takes a few seconds|
-|`400`|`[{`<br>`"error": "BadRequestError",`<br>`"message": "File did not pass the virus scan"`<br>`}]`|You cannot retrieve the contents of a letter notification that contains a virus|
-|`400`|`[{`<br>`"error": "BadRequestError",`<br>`"message": "PDF not available for letters in technical-failure"`<br>`}]`|You cannot retrieve the contents of a letter notification in technical-failure|
-|`400`|`[{`<br>`"error": "ValidationError",`<br>`"message": "Notification is not a letter"`<br>`}]`|Check that you are looking up the correct notification|
-|`403`|`[{`<br>`"error": "AuthError",`<br>`"message": "Error: Your system clock must be accurate to within 30 seconds"`<br>`}]`|Check your system clock|
-|`403`|`[{`<br>`"error": "AuthError",`<br>`"message": "Invalid token: API key not found"`<br>`}]`|Use the correct API key. Refer to [API keys](#api-keys) for more information|
-|`404`|`[{`<br>`"error": "NoResultFound",`<br>`"message": "No result found"`<br>`}]`|Check the notification ID|
-
 
 ## Get a template
 
@@ -795,7 +543,7 @@ Template template = client.getTemplateById(templateId);
 
 ##### templateId (required)
 
-The ID of the template. [Sign in to GOV.UK Notify](https://www.notifications.service.gov.uk/sign-in) and go to the __Templates__ page to find it.
+The ID of the template. [Sign in to VANotify](https://notifications.va.gov) and go to the __Templates__ page to find it.
 
 ```
 String templateId='f33517ff-2a88-4f6e-b855-c550268ce08a';
@@ -842,7 +590,7 @@ Template template = client.getTemplateVersion(templateId, version);
 
 ##### templateId (required)
 
-The ID of the template. [Sign in to GOV.UK Notify](https://www.notifications.service.gov.uk/sign-in) and go to the __Templates__ page to find it.
+The ID of the template. [Sign in to VANotify](https://notifications.va.gov) and go to the __Templates__ page to find it.
 
 ```
 String templateId='f33517ff-2a88-4f6e-b855-c550268ce08a';
@@ -900,7 +648,6 @@ If you do not use `templateType`, the client returns all templates. Otherwise yo
 
 - `email`
 - `sms`
-- `letter`
 
 #### Response
 
@@ -931,7 +678,7 @@ The parameters in the personalisation argument must match the placeholder fields
 
 ##### templateId (required)
 
-The ID of the template. [Sign in to GOV.UK Notify](https://www.notifications.service.gov.uk/sign-in) and go to the __Templates__ page to find it.
+The ID of the template. [Sign in to VANotify](https://notifications.va.gov) and go to the __Templates__ page to find it.
 
 ```
 String templateId='f33517ff-2a88-4f6e-b855-c550268ce08a';
@@ -983,7 +730,7 @@ You can also set up [callbacks](#callbacks) for received text messages.
 
 ### Enable received text messages
 
-Contact the GOV.UK Notify team using the [support page](https://www.notifications.service.gov.uk/support) or [chat to us on Slack](https://ukgovernmentdigital.slack.com/messages/C0E1ADVPC) to request a unique number for text message replies.
+Contact the VANotify team using the [support page](https://notifications.va.gov/support) or [chat to us on Slack](https://dsva.slack.com/messages/C010R6AUPHT) to request a unique number for text message replies.
 
 ### Get a page of received text messages
 

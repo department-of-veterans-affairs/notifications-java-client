@@ -1,0 +1,5 @@
+fileignoreconfig:
+  - filename: DOCUMENTATION.md
+    checksum: 4aba218e64a7072365eeb0e9ac682f6eaea0d4cf48f713476b36be0686a45683
+  - filename: src/main/java/gov/va/vanotify/NotificationClient.java
+    checksum: a2d1bc96e150d815fb7188c7f81a2b622c0412fb5adc3858d6184ab023efd45a

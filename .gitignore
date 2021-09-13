@@ -1,11 +1,12 @@
 .idea/
+.settings/
 *.iws
 *.ipr
 *.iml
 /target
 .m2
 .DS_Store
+.project
+.classpath
 
-environment.sh
 docker.env
-pom.xml.versionsBackup
