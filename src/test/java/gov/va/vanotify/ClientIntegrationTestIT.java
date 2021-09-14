@@ -2,6 +2,7 @@ package gov.va.vanotify;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -38,6 +39,7 @@ public class ClientIntegrationTestIT {
     }
 
     @Test
+    @Ignore
     public void testLetterNotificationIT() throws NotificationClientException {
         NotificationClient client = getClient();
         SendLetterResponse letterResponse = sendLetterAndAssertResponse(client);
@@ -288,6 +290,7 @@ public class ClientIntegrationTestIT {
     }
 
     @Test
+    @Ignore
     public void testSendPrecompiledLetterValidPDFFileIT() throws Exception {
         String reference = UUID.randomUUID().toString();
 
@@ -301,6 +304,7 @@ public class ClientIntegrationTestIT {
     }
 
     @Test
+    @Ignore
     public void testSendPrecompiledLetterValidPDFFileITWithPostage() throws Exception {
         String reference = UUID.randomUUID().toString();
 
@@ -314,6 +318,7 @@ public class ClientIntegrationTestIT {
     }
 
     @Test
+    @Ignore
     public void testSendPrecompiledLetterWithInputStream() throws Exception {
         String reference = UUID.randomUUID().toString();
 
@@ -328,6 +333,7 @@ public class ClientIntegrationTestIT {
     }
 
     @Test
+    @Ignore
     public void testSendPrecompiledLetterWithInputStreamWithPostage() throws Exception {
         String reference = UUID.randomUUID().toString();
 
