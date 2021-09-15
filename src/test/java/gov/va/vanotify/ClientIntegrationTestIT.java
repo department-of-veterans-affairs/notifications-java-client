@@ -438,7 +438,6 @@ public class ClientIntegrationTestIT {
         assertEquals(Optional.ofNullable(billingCode), response.getBillingCode());
         assertNotNull(response.getNotificationId());
         assertNotNull(response.getSubject());
-        assertNotNull(response.getFromEmail().orElse(null));
         assertNotNull(response.getTemplateUri());
         assertNotNull(response.getTemplateId());
     }
@@ -449,7 +448,6 @@ public class ClientIntegrationTestIT {
         assertEquals(Optional.of(uniqueName), response.getReference());
         assertNotNull(response.getNotificationId());
         assertNotNull(response.getSubject());
-        assertNotNull(response.getFromEmail().orElse(null));
         assertNotNull(response.getTemplateUri());
         assertNotNull(response.getTemplateId());
     }
