@@ -14,12 +14,14 @@ public class SendEmailResponse {
     private final String body;
     private final String subject;
     private final String fromEmail;
+    private final String billingCode;
 
 
     public SendEmailResponse(String response) {
         JSONObject data = new JSONObject(response);
         notificationId = UUID.fromString(data.getString("id"));
         reference = data.isNull("reference") ? null : data.getString("reference");
+        billingCode = data.isNull("billing_code") ? null : data.getString("billing_code");
         JSONObject content = data.getJSONObject("content");
         body = content.getString("body");
         fromEmail = content.isNull("from_email") ? null : content.getString("from_email");
@@ -62,6 +64,10 @@ public class SendEmailResponse {
         return Optional.ofNullable(fromEmail);
     }
 
+    public Optional<String> getBillingCode() {
+        return Optional.ofNullable(billingCode);
+    }
+
     @Override
     public String toString() {
         return "SendEmailResponse{" +
@@ -73,6 +79,9 @@ public class SendEmailResponse {
                 ", body='" + body + '\'' +
                 ", subject='" + subject + '\'' +
                 ", fromEmail=" + fromEmail +
+                ", billingCode=" + billingCode +
                 '}';
     }
+
+
 }

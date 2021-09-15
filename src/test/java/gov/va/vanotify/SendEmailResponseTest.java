@@ -27,6 +27,7 @@ public class SendEmailResponseTest {
         content.put("from_email", "senderId");
         content.put("subject", "Reminder for thing");
         postEmailResponse.put("content", content);
+        postEmailResponse.put("billing_code", "custom code");
 
 
         SendEmailResponse response = new SendEmailResponse(postEmailResponse.toString());
@@ -38,5 +39,6 @@ public class SendEmailResponseTest {
         assertEquals("hello Fred", response.getBody());
         assertEquals("Reminder for thing", response.getSubject());
         assertEquals(Optional.of("senderId"), response.getFromEmail());
+        assertEquals(Optional.of("custom code"), response.getBillingCode());
     }
 }

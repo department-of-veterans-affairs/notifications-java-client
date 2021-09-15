@@ -26,6 +26,7 @@ public class SendSmsResponseTest {
         content.put("body", "hello Fred");
         content.put("from_number", "senderId");
         postSmsReponse.put("content", content);
+        postSmsReponse.put("billing_code", "custom code");
 
 
         SendSmsResponse response = new SendSmsResponse(postSmsReponse.toString());
@@ -36,5 +37,6 @@ public class SendSmsResponseTest {
         assertEquals(1, response.getTemplateVersion());
         assertEquals("hello Fred", response.getBody());
         assertEquals(Optional.of("senderId"), response.getFromNumber());
+        assertEquals(Optional.of("custom code"), response.getBillingCode());
     }
 }

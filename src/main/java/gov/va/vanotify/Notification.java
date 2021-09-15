@@ -31,13 +31,14 @@ public class Notification {
     private DateTime completedAt;
     private DateTime estimatedDelivery;
     private String createdByName;
+    private String billingCode;
 
     public Notification(String content){
         JSONObject responseBodyAsJson = new JSONObject(content);
         build(responseBodyAsJson);
     }
 
-    public Notification(org.json.JSONObject data){
+    public Notification(JSONObject data){
         build(data);
     }
 
@@ -67,6 +68,7 @@ public class Notification {
         completedAt = data.isNull("completed_at") ? null : new DateTime(data.getString("completed_at"));
         estimatedDelivery = data.isNull("estimated_delivery") ? null : new DateTime(data.getString("estimated_delivery"));
         createdByName = data.isNull("created_by_name") ? null : data.getString("created_by_name");
+        billingCode = data.isNull("billing_code") ? null : data.getString("billing_code");
     }
 
     public UUID getId() {
@@ -160,6 +162,8 @@ public class Notification {
         return Optional.ofNullable(createdByName);
     }
 
+    public Optional<String> getBillingCode() { return Optional.ofNullable(billingCode); }
+
     /**
      * estimatedDelivery is only present on letters
      */
@@ -193,6 +197,7 @@ public class Notification {
                 ", completedAt=" + completedAt +
                 ", estimatedDelivery=" + estimatedDelivery +
                 ", createdByName=" + createdByName +
+                ", billingCode=" + billingCode +
                 '}';
     }
 }

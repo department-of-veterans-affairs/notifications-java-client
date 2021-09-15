@@ -134,7 +134,7 @@ public class NotificationClientTest {
         NotificationClient client = Mockito.spy(new NotificationClient(combinedApiKey, baseUrl));
         doReturn(mockConnection(404)).when(client).getConnection(any());
 
-        client.sendSms("aTemplateId", "aPhoneNumber", emptyMap(), "aReference");
+        client.sendSms("aTemplateId", "aPhoneNumber", emptyMap(), "aReference", "aBillingCode");
     }
 
     private HttpURLConnection mockConnection(int statusCode) throws Exception {

@@ -136,8 +136,9 @@ public class NotificationClient implements NotificationClientApi {
     public SendEmailResponse sendEmail(String templateId,
                                        String emailAddress,
                                        Map<String, ?> personalisation,
-                                       String reference) throws NotificationClientException {
-        return sendEmail(templateId, emailAddress, personalisation, reference, "");
+                                       String reference,
+                                       String billingCode) throws NotificationClientException {
+        return sendEmail(templateId, emailAddress, personalisation, reference, billingCode, "");
     }
 
     @Override
@@ -145,6 +146,7 @@ public class NotificationClient implements NotificationClientApi {
                                        String emailAddress,
                                        Map<String, ?> personalisation,
                                        String reference,
+                                       String billingCode,
                                        String emailReplyToId) throws NotificationClientException {
 
         JSONObject body = createBodyForPostRequest(templateId,
@@ -152,6 +154,7 @@ public class NotificationClient implements NotificationClientApi {
                 emailAddress,
                 personalisation,
                 reference,
+                billingCode,
                 null,
                 null);
 
@@ -165,14 +168,15 @@ public class NotificationClient implements NotificationClientApi {
         return new SendEmailResponse(response);
     }
 
-    public SendSmsResponse sendSms(String templateId, String phoneNumber, Map<String, ?> personalisation, String reference) throws NotificationClientException {
-        return sendSms(templateId, phoneNumber, personalisation, reference, "");
+    public SendSmsResponse sendSms(String templateId, String phoneNumber, Map<String, ?> personalisation, String reference, String billingCode) throws NotificationClientException {
+        return sendSms(templateId, phoneNumber, personalisation, reference, billingCode, "");
     }
 
     public SendSmsResponse sendSms(String templateId,
                                    String phoneNumber,
                                    Map<String, ?> personalisation,
                                    String reference,
+                                   String billingCode,
                                    String smsSenderId) throws NotificationClientException {
 
         JSONObject body = createBodyForPostRequest(templateId,
@@ -180,6 +184,7 @@ public class NotificationClient implements NotificationClientApi {
                 null,
                 personalisation,
                 reference,
+                billingCode,
                 null,
                 null);
 
@@ -192,7 +197,7 @@ public class NotificationClient implements NotificationClientApi {
     }
 
     public SendLetterResponse sendLetter(String templateId, Map<String, ?> personalisation, String reference) throws NotificationClientException {
-        JSONObject body = createBodyForPostRequest(templateId, null, null, personalisation, reference, null, null);
+        JSONObject body = createBodyForPostRequest(templateId, null, null, personalisation, reference, null, null, null);
         HttpURLConnection conn = createConnectionAndSetHeaders(baseUrl + "/v2/notifications/letter", "POST");
         String response = performPostRequest(conn, body, HttpsURLConnection.HTTP_CREATED);
         return new SendLetterResponse(response);
@@ -426,6 +431,7 @@ public class NotificationClient implements NotificationClientApi {
                                                 final String emailAddress,
                                                 final Map<String, ?> personalisation,
                                                 final String reference,
+                                                final String billingCode,
                                                 final String encodedFileData,
                                                 final String postage) {
         JSONObject body = new JSONObject();
@@ -448,6 +454,10 @@ public class NotificationClient implements NotificationClientApi {
 
         if(reference != null && !reference.isEmpty()){
             body.put("reference", reference);
+        }
+
+        if(billingCode != null && !billingCode.isEmpty()){
+            body.put("billing_code", billingCode);
         }
 
         if(encodedFileData != null && !encodedFileData.isEmpty()) {
@@ -544,6 +554,7 @@ public class NotificationClient implements NotificationClientApi {
                 null,
                 null,
                 reference,
+                null,
                 base64EncodedPDFFile,
                 postage);
 

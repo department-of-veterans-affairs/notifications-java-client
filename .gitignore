@@ -4,6 +4,7 @@
 *.ipr
 *.iml
 /target
+.env
 .m2
 .DS_Store
 .project
