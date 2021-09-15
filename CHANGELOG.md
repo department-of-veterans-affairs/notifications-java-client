@@ -1,3 +1,8 @@
+## 1.0.0
+* Forked client for U.S. Department of Veterans Affairs
+* Renamed project to vanotify-java-client. Updated repositories, links, urls. etc
+* Added support for `billing_code` in Email and SMS requests.
+
 ## 3.17.2-RELEASE
 * Updated dependencies to latest versions
 

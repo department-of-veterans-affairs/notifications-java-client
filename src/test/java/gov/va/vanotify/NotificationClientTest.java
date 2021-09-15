@@ -55,7 +55,7 @@ public class NotificationClientTest {
     public void testCreateNotificationClientSetsUserAgent() {
         NotificationClient client = new NotificationClient(combinedApiKey, baseUrl);
         assertTrue(client.getUserAgent().contains("NOTIFY-API-JAVA-CLIENT/"));
-        assertTrue(client.getUserAgent().contains("-RELEASE"));
+        assertTrue(client.getUserAgent().contains(client.getVersion()));
     }
 
     @Test

@@ -502,7 +502,7 @@ public class NotificationClient implements NotificationClientApi {
     }
 
 
-    private String getVersion(){
+    protected String getVersion(){
         InputStream input = null;
         Properties prop = new Properties();
         try
