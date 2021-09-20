@@ -10,6 +10,21 @@ public interface NotificationClientApi {
     /**
      * The sendEmail method will create an HTTPS POST request. A JWT token will be created and added as an Authorization header to the request.
      *
+     * @param emailRequest  Email request built using fluent builder API.
+     *
+     * @return <code>SendEmailResponse</code>
+     * @throws NotificationClientException see https://docs.notifications.service.gov.uk/java.html#send-an-email-error-codes
+     */
+    SendEmailResponse sendEmail(EmailRequest emailRequest) throws NotificationClientException;
+
+
+    /**
+     * The sendEmail method will create an HTTPS POST request. A JWT token will be created and added as an Authorization header to the request.
+     *
+     * @deprecated
+     * <p> Use {@link NotificationClientApi#sendEmail(EmailRequest)} instead that offers fluent builder API.
+     * This method will not support new functionality (VA Identifiers) and will be removed in future versions.
+     *
      * @param templateId      The template id is visible on the template page in the application.
      * @param emailAddress    The email address
      * @param personalisation Map representing the placeholders for the template if any. For example, key=name value=Bob
@@ -23,11 +38,16 @@ public interface NotificationClientApi {
      * @return <code>SendEmailResponse</code>
      * @throws NotificationClientException see https://docs.notifications.service.gov.uk/java.html#send-an-email-error-codes
      */
+    @Deprecated
     SendEmailResponse sendEmail(String templateId, String emailAddress, Map<String, ?> personalisation, String reference, String billingCode) throws NotificationClientException;
 
 
     /**
      * The sendEmail method will create an HTTPS POST request. A JWT token will be created and added as an Authorization header to the request.
+     *
+     * @deprecated
+     * <p> Use {@link NotificationClientApi#sendEmail(EmailRequest)} instead that offers fluent builder API.
+     * This method will not support new functionality (VA Identifiers) and will be removed in future versions.
      *
      * @param templateId      The template id is visible on the template page in the application.
      * @param emailAddress    The email address
@@ -45,10 +65,26 @@ public interface NotificationClientApi {
      * @return <code>SendEmailResponse</code>
      * @throws NotificationClientException see https://docs.notifications.service.gov.uk/java.html#send-an-email-error-codes
      */
+    @Deprecated
     SendEmailResponse sendEmail(String templateId, String emailAddress, Map<String, ?> personalisation, String reference, String billingCode, String emailReplyToId) throws NotificationClientException;
+
 
     /**
      * The sendSms method will create an HTTPS POST request. A JWT token will be created and added as an Authorization header to the request.
+     *
+     * @param smsRequest  SMS request built using fluent builder API.
+     *
+     * @return <code>SendEmailResponse</code>
+     * @throws NotificationClientException see https://docs.notifications.service.gov.uk/java.html#send-an-email-error-codes
+     */
+    SendSmsResponse sendSms(SmsRequest smsRequest) throws NotificationClientException;
+
+    /**
+     * The sendSms method will create an HTTPS POST request. A JWT token will be created and added as an Authorization header to the request.
+     *
+     * @deprecated
+     * <p> Use {@link NotificationClientApi#sendSms(SmsRequest)} instead that offers fluent builder API.
+     * This method will not support new functionality (VA Identifiers) and will be removed in future versions.
      *
      * @param templateId      The template id is visible from the template page in the application.
      * @param phoneNumber     The mobile phone number
@@ -63,10 +99,15 @@ public interface NotificationClientApi {
      * @return <code>SendSmsResponse</code>
      * @throws NotificationClientException see https://docs.notifications.service.gov.uk/java.html#error-codes
      */
+    @Deprecated
     SendSmsResponse sendSms(String templateId, String phoneNumber, Map<String, ?> personalisation, String reference, String billingCode) throws NotificationClientException;
 
     /**
      * The sendSms method will create an HTTPS POST request. A JWT token will be created and added as an Authorization header to the request.
+     *
+     * @deprecated
+     * <p> Use {@link NotificationClientApi#sendSms(SmsRequest)} instead that offers fluent builder API.
+     * This method will not support new functionality (VA Identifiers) and will be removed in future versions.
      *
      * @param templateId      The template id is visible from the template page in the application.
      * @param phoneNumber     The mobile phone number
@@ -84,6 +125,7 @@ public interface NotificationClientApi {
      * @return <code>SendSmsResponse</code>
      * @throws NotificationClientException see https://docs.notifications.service.gov.uk/java.html#error-codes
      */
+    @Deprecated
     SendSmsResponse sendSms(String templateId, String phoneNumber, Map<String, ?> personalisation, String reference, String billingCode, String smsSenderId) throws NotificationClientException;
 
     /**

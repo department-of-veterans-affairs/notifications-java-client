@@ -133,6 +133,12 @@ public class NotificationClient implements NotificationClientApi {
         return proxy;
     }
 
+    public SendEmailResponse sendEmail(EmailRequest emailRequest) throws NotificationClientException {
+        HttpURLConnection conn = createConnectionAndSetHeaders(baseUrl + "/v2/notifications/email", "POST");
+        String response = performPostRequest(conn, emailRequest.asJson(), HttpsURLConnection.HTTP_CREATED);
+        return new SendEmailResponse(response);
+    }
+
     public SendEmailResponse sendEmail(String templateId,
                                        String emailAddress,
                                        Map<String, ?> personalisation,
@@ -168,6 +174,12 @@ public class NotificationClient implements NotificationClientApi {
         return new SendEmailResponse(response);
     }
 
+    public SendSmsResponse sendSms(SmsRequest smsRequest) throws NotificationClientException {
+        HttpURLConnection conn = createConnectionAndSetHeaders(baseUrl + "/v2/notifications/sms", "POST");
+        String response = performPostRequest(conn, smsRequest.asJson(), HttpsURLConnection.HTTP_CREATED);
+        return new SendSmsResponse(response);
+    }
+
     public SendSmsResponse sendSms(String templateId, String phoneNumber, Map<String, ?> personalisation, String reference, String billingCode) throws NotificationClientException {
         return sendSms(templateId, phoneNumber, personalisation, reference, billingCode, "");
     }
@@ -189,7 +201,7 @@ public class NotificationClient implements NotificationClientApi {
                 null);
 
         if( smsSenderId != null && !smsSenderId.isEmpty()){
-            body.put("sms_sender_id", smsSenderId);
+            body.put(" ", smsSenderId);
         }
         HttpURLConnection conn = createConnectionAndSetHeaders(baseUrl + "/v2/notifications/sms", "POST");
         String response = performPostRequest(conn, body, HttpsURLConnection.HTTP_CREATED);
