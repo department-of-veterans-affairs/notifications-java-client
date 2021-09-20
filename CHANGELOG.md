@@ -1,3 +1,48 @@
+## 1.1.0
+* Added EmailRequest with a fluent builder to avoid constructors with lots of same type optional arguments.
+  You can use it as follows:
+  ```
+  SendEmailResponse response = client.sendEmail(new EmailRequest.Builder()
+                .withTemplateId("aTemplateId")
+                .withEmailAddress("some@email.com")
+                .withPersonalisation(emptyMap())
+                .withReference("aReference")
+                .withBillingCode("aBillingCode")
+                .withEmailReplyToId("aEmailReplyToId")
+                .build()
+        );
+  ```
+* Deprecated following NotificationClientApi sendEmail methods:
+  ```
+  @Deprecated
+  SendEmailResponse sendEmail(String templateId, String emailAddress, Map<String, ?> personalisation, String reference, String billingCode) throws NotificationClientException;
+  
+  @Deprecated
+  SendEmailResponse sendEmail(String templateId, String emailAddress, Map<String, ?> personalisation, String reference, String billingCode, String emailReplyToId) throws NotificationClientException;
+  ```
+* Added SmsRequest with a fluent builder to avoid constructors with lots of same type optional arguments.
+  You can use it as follows:
+  ```
+  client.sendSms(new SmsRequest.Builder()
+                .withTemplateId("aTemplateId")
+                .withPhoneNumber("aPhoneNumber")
+                .withPersonalisation(emptyMap())
+                .withReference("aReference")
+                .withBillingCode("aBillingCode")
+                .withSmsSenderId("aSmsSenderId")
+                .build()
+        );
+  ```
+* Deprecated following NotificationClientApi sendSms methods:
+  ```
+  @Deprecated
+  SendSmsResponse sendSms(String templateId, String phoneNumber, Map<String, ?> personalisation, String reference, String billingCode) throws NotificationClientException;
+  
+  @Deprecated
+  SendSmsResponse sendSms(String templateId, String phoneNumber, Map<String, ?> personalisation, String reference, String billingCode, String smsSenderId) throws NotificationClientException;
+  ```
+
+
 ## 1.0.0
 * Forked client for U.S. Department of Veterans Affairs
 * Renamed project to vanotify-java-client. Updated repositories, links, urls. etc
