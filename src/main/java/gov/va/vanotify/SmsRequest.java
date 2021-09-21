@@ -8,49 +8,23 @@ import java.util.Map;
  * Represents SMS notification request
  * To create an instance use the static builder with fluent API
  * {@link SmsRequest.Builder}
+ * {@link NotificationRequest.Builder}
  */
-public class SmsRequest implements NotificationRequest {
-    private final String templateId;
-    private final String phoneNumber;
-    private final Map<String, ?> personalisation;
-    private final String reference;
+public class SmsRequest extends NotificationRequest {
     private final String smsSenderId;
-    private final String billingCode;
 
     private SmsRequest(Builder builder) {
-        this.templateId = builder.templateId;
-        this.phoneNumber = builder.phoneNumber;
-        this.personalisation = builder.personalisation;
-        this.reference = builder.reference;
+        super(builder);
         this.smsSenderId = builder.smsSenderId;
-        this.billingCode = builder.billingCode;
-
-        if (this.templateId == null || this.templateId.isEmpty()) throw new IllegalStateException("Missing templateId");
-        if (this.phoneNumber == null || this.phoneNumber.isEmpty()) throw new IllegalStateException("Missing phoneNumber");
-    }
-
-    public String getTemplateId() {
-        return templateId;
+        if (this.recipient == null || this.recipient.isEmpty()) throw new IllegalStateException("Missing phoneNumber");
     }
 
     public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public Map<String, ?> getPersonalisation() {
-        return personalisation;
-    }
-
-    public String getReference() {
-        return reference;
+        return recipient;
     }
 
     public String getSmsSenderId() {
         return smsSenderId;
-    }
-
-    public String getBillingCode() {
-        return billingCode;
     }
 
     @Override
@@ -59,8 +33,8 @@ public class SmsRequest implements NotificationRequest {
 
         body.put("template_id", templateId);
 
-        if(phoneNumber != null && !phoneNumber.isEmpty()) {
-            body.put("phone_number", phoneNumber);
+        if(recipient != null && !recipient.isEmpty()) {
+            body.put("phone_number", recipient);
         }
 
         if (personalisation != null && !personalisation.isEmpty()) {
@@ -84,22 +58,13 @@ public class SmsRequest implements NotificationRequest {
 
     /**
      * Fluent API Builder for SmsRequest
+     * Please see {@link NotificationRequest.Builder} for builder methods shared between all notification requests
      */
-    public static class Builder {
-        private String templateId;
-        private String phoneNumber;
-        private Map<String, ?> personalisation;
-        private String reference;
+    public static class Builder extends NotificationRequest.Builder<SmsRequest, Builder>{
         private String smsSenderId;
-        private String billingCode;
 
-        /**
-         * Sets <b>required</b> templateId.
-         * @param templateId    The template id is visible on the template page in the application.
-         * @return reference to itself (builder)
-         */
-        public Builder withTemplateId(String templateId) {
-            this.templateId = templateId;
+        @Override
+        protected Builder getInstance() {
             return this;
         }
 
@@ -109,28 +74,7 @@ public class SmsRequest implements NotificationRequest {
          * @return reference to itself (builder)
          */
         public Builder withPhoneNumber(String phoneNumber) {
-            this.phoneNumber = phoneNumber;
-            return this;
-        }
-
-        /**
-         * Sets <b>optional</b> personalisations.
-         * @param personalisation   Map representing the placeholders for the template if any. For example, key=name value=Bob
-         * @return reference to itself (builder)
-         */
-        public Builder withPersonalisation(Map<String, ?> personalisation) {
-            this.personalisation = personalisation;
-            return this;
-        }
-
-        /**
-         * Sets <b>optional</b> reference
-         * @param reference A reference specified by the service for the notification. Get all notifications can be filtered by this reference.
-         *                  This reference can be unique or used used to refer to a batch of notifications.
-         * @return reference to itself (builder)
-         */
-        public Builder withReference(String reference) {
-            this.reference = reference;
+            this.withRecipient(phoneNumber);
             return this;
         }
 
@@ -147,21 +91,11 @@ public class SmsRequest implements NotificationRequest {
         }
 
         /**
-         *
-         * @param billingCode   A billing code specified by the service for the notification.
-         *                      Used to group notifications for billing and reporting.
-         * @return reference to itself (builder)
-         */
-        public Builder withBillingCode(String billingCode) {
-            this.billingCode = billingCode;
-            return this;
-        }
-
-        /**
          * Builds {@link SmsRequest}
          * @return <code>SmsRequest</code>
          * @throws IllegalStateException if any required fields are missing
          */
+        @Override
         public SmsRequest build() {
             return new SmsRequest(this);
         }
