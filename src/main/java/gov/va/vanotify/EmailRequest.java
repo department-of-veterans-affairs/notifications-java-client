@@ -29,24 +29,10 @@ public class EmailRequest extends NotificationRequest {
 
     @Override
     public JSONObject asJson() {
-        JSONObject body = new JSONObject();
-
-        body.put("template_id", templateId);
+        JSONObject body = super.asJson();
 
         if(recipient != null && !recipient.isEmpty()) {
             body.put("email_address", recipient);
-        }
-
-        if (personalisation != null && !personalisation.isEmpty()) {
-            body.put("personalisation", personalisation);
-        }
-
-        if(reference != null && !reference.isEmpty()){
-            body.put("reference", reference);
-        }
-
-        if(billingCode != null && !billingCode.isEmpty()){
-            body.put("billing_code", billingCode);
         }
 
         if(emailReplyToId != null && !emailReplyToId.isEmpty())
