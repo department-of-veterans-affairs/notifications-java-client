@@ -1,36 +1,65 @@
 package gov.va.vanotify;
 
 import org.json.JSONObject;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 public class EmailRequestTest {
-    @Test(expected = IllegalStateException.class)
-    public void emailRequestRequiresEmailAddress(){
-        new EmailRequest.Builder().withTemplateId(UUID.randomUUID().toString()).build();
+
+    public static Object[][] missingArgumentsTestData() {
+        return new Object[][]{
+                {null, null},
+                {"", null}
+        };
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void emailRequestRequiresTemplateId(){
-        new EmailRequest.Builder().withEmailAddress("user@email.com").build();
+    @ParameterizedTest
+    @MethodSource("missingArgumentsTestData")
+    public void emailRequestRequiresEmailAddressOrIdentifier(String emailAddress, Identifier identifier){
+        assertThrows(IllegalStateException.class, () -> {
+            new EmailRequest.Builder()
+                    .withTemplateId(UUID.randomUUID().toString())
+                    .withEmailAddress(emailAddress)
+                    .withRecipientIdentifier(identifier)
+                    .build();
+        });
     }
 
     @Test
-    public void emailRequestCanBeCreatedWithOnlyRequiredFields(){
-        String templateId = UUID.randomUUID().toString();
-        String emailAddress = "user@email.com";
+    public void emailRequestRequiresTemplateId(){
+        assertThrows(IllegalStateException.class, () -> {
+            new EmailRequest.Builder().withEmailAddress("user@email.com").build();
+        });
+    }
+
+    public static Object[][] requiredArgumentsTestData() {
+        return new Object[][]{
+                {UUID.randomUUID().toString(), "user@email.com", null},
+                {UUID.randomUUID().toString(), null, new Identifier(IdentifierType.ICN, "1234")},
+        };
+    }
+
+    @ParameterizedTest
+    @MethodSource("requiredArgumentsTestData")
+    public void emailRequestCanBeCreatedWithOnlyRequiredFields(String templateId, String emailAddress, Identifier identifier){
         EmailRequest request = new EmailRequest.Builder()
                 .withTemplateId(templateId)
                 .withEmailAddress(emailAddress)
+                .withRecipientIdentifier(identifier)
                 .build();
 
         assertEquals(emailAddress, request.getEmailAddress());
         assertEquals(templateId, request.getTemplateId());
+        assertEquals(identifier, request.getRecipientIdentifier());
         assertNull(request.getBillingCode());
         assertNull(request.getEmailReplyToId());
         assertNull(request.getReference());
@@ -47,6 +76,7 @@ public class EmailRequestTest {
         Map<String, String> personalisation = new HashMap(){{
             put("foo", "bar");
         }};
+        Identifier identifier = new Identifier(IdentifierType.ICN, "1234");
 
 
         EmailRequest request = new EmailRequest.Builder()
@@ -56,6 +86,7 @@ public class EmailRequestTest {
                 .withReference(reference)
                 .withBillingCode(billingCode)
                 .withPersonalisation(personalisation)
+                .withRecipientIdentifier(identifier)
                 .build();
 
         JSONObject actual = request.asJson();
@@ -65,5 +96,7 @@ public class EmailRequestTest {
         assertEquals(reference, actual.getString("reference"));
         assertEquals(billingCode, actual.getString("billing_code"));
         assertEquals("bar", actual.getJSONObject("personalisation").getString("foo"));
+        assertEquals("ICN", actual.getJSONObject("recipient_identifier").getString("id_type"));
+        assertEquals(identifier.getValue(), actual.getJSONObject("recipient_identifier").getString("id_value"));
     }
 }

@@ -1,10 +1,16 @@
 package gov.va.vanotify;
 
 import org.joda.time.DateTime;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static java.util.Collections.emptyList;
 
 public class Notification {
     private UUID id;
@@ -32,6 +38,7 @@ public class Notification {
     private DateTime estimatedDelivery;
     private String createdByName;
     private String billingCode;
+    private List<Identifier> recipientIdentifiers;
 
     public Notification(String content){
         JSONObject responseBodyAsJson = new JSONObject(content);
@@ -69,6 +76,15 @@ public class Notification {
         estimatedDelivery = data.isNull("estimated_delivery") ? null : new DateTime(data.getString("estimated_delivery"));
         createdByName = data.isNull("created_by_name") ? null : data.getString("created_by_name");
         billingCode = data.isNull("billing_code") ? null : data.getString("billing_code");
+        recipientIdentifiers = data.isNull("recipient_identifiers") ? emptyList() : this.buildRecipientIdentifiers(data.getJSONArray("recipient_identifiers"));
+    }
+
+    private List<Identifier> buildRecipientIdentifiers(JSONArray recipientIdentifiers) {
+        List<Identifier> identifiers = new ArrayList<>();
+        for (int i = 0; i < recipientIdentifiers.length(); i++) {
+            identifiers.add(Identifier.fromJson(recipientIdentifiers.getJSONObject(i)));
+        }
+        return identifiers;
     }
 
     public UUID getId() {
@@ -164,6 +180,8 @@ public class Notification {
 
     public Optional<String> getBillingCode() { return Optional.ofNullable(billingCode); }
 
+    public List<Identifier> getRecipientIdentifiers() { return recipientIdentifiers; }
+
     /**
      * estimatedDelivery is only present on letters
      */
@@ -198,6 +216,7 @@ public class Notification {
                 ", estimatedDelivery=" + estimatedDelivery +
                 ", createdByName=" + createdByName +
                 ", billingCode=" + billingCode +
+                ", recipientIdentifier=" + recipientIdentifiers +
                 '}';
     }
 }

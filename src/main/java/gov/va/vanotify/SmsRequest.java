@@ -2,8 +2,6 @@ package gov.va.vanotify;
 
 import org.json.JSONObject;
 
-import java.util.Map;
-
 /**
  * Represents SMS notification request
  * To create an instance use the static builder with fluent API
@@ -16,7 +14,7 @@ public class SmsRequest extends NotificationRequest {
     private SmsRequest(Builder builder) {
         super(builder);
         this.smsSenderId = builder.smsSenderId;
-        if (this.recipient == null || this.recipient.isEmpty()) throw new IllegalStateException("Missing phoneNumber");
+        if (this.missingRecipient() && this.recipientIdentifier == null) throw new IllegalStateException("Missing at least one of phoneNumber and recipientIdentifier");
     }
 
     public String getPhoneNumber() {

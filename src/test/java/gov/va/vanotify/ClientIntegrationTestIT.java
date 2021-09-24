@@ -2,8 +2,11 @@ package gov.va.vanotify;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,11 +17,7 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ClientIntegrationTestIT {
 
@@ -39,7 +38,7 @@ public class ClientIntegrationTestIT {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testLetterNotificationIT() throws NotificationClientException {
         NotificationClient client = getClient();
         SendLetterResponse letterResponse = sendLetterAndAssertResponse(client);
@@ -145,7 +144,7 @@ public class ClientIntegrationTestIT {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testEmailNotificationWithUploadedDocumentInPersonalisation() throws NotificationClientException, IOException {
         NotificationClient client = getClient();
         HashMap<String, Object> personalisation = new HashMap<>();
@@ -167,6 +166,36 @@ public class ClientIntegrationTestIT {
         );
 
         assertNotificationEmailResponseWithDocumentInPersonalisation(emailResponse, reference);
+    }
+
+    public static Object[][] emailWithRecipientIdentifierTestData() {
+        return new Object[][]{
+                {System.getenv("FUNCTIONAL_TEST_EMAIL")},
+                {null}
+        };
+    }
+
+    @ParameterizedTest
+    @MethodSource("emailWithRecipientIdentifierTestData")
+    public void testEmailNotificationWithRecipientIdentifier(String emailAddress) throws NotificationClientException {
+        Identifier recipientIdentifier = new Identifier(IdentifierType.VAPROFILEID, UUID.randomUUID().toString());
+        NotificationClient client = getClient();
+
+        HashMap<String, String> personalisation = new HashMap<>();
+        personalisation.put("name", "Bob");
+        SendEmailResponse response = client.sendEmail(new EmailRequest.Builder()
+                .withTemplateId(System.getenv("EMAIL_TEMPLATE_ID"))
+                .withPersonalisation(personalisation)
+                .withEmailAddress(emailAddress)
+                .withRecipientIdentifier(recipientIdentifier)
+                .build()
+        );
+        assertNotNull(response);
+        assertNotNull(response.getNotificationId());
+
+        Notification notification = client.getNotificationById(response.getNotificationId().toString());
+        assertEquals(notification.getEmailAddress(), Optional.ofNullable(emailAddress));
+        assertTrue(notification.getRecipientIdentifiers().contains(recipientIdentifier));
     }
 
 
@@ -236,7 +265,36 @@ public class ClientIntegrationTestIT {
         }
 
         assertTrue(exceptionThrown);
+    }
 
+    public static Object[][] smsWithRecipientIdentifierTestData() {
+        return new Object[][]{
+                {System.getenv("FUNCTIONAL_TEST_NUMBER")},
+                {null}
+        };
+    }
+
+    @ParameterizedTest
+    @MethodSource("smsWithRecipientIdentifierTestData")
+    public void testSmsNotificationWithRecipientIdentifier(String phoneNumber) throws NotificationClientException {
+        Identifier recipientIdentifier = new Identifier(IdentifierType.VAPROFILEID, UUID.randomUUID().toString());
+        NotificationClient client = getClient();
+
+        HashMap<String, String> personalisation = new HashMap<>();
+        personalisation.put("name", "Bob");
+        SendSmsResponse response = client.sendSms(new SmsRequest.Builder()
+                .withTemplateId(System.getenv("SMS_TEMPLATE_ID"))
+                .withPersonalisation(personalisation)
+                .withPhoneNumber(phoneNumber)
+                .withRecipientIdentifier(recipientIdentifier)
+                .build()
+        );
+        assertNotNull(response);
+        assertNotNull(response.getNotificationId());
+
+        Notification notification = client.getNotificationById(response.getNotificationId().toString());
+        assertEquals(notification.getPhoneNumber(), Optional.ofNullable(phoneNumber));
+        assertTrue(notification.getRecipientIdentifiers().contains(recipientIdentifier));
     }
 
     @Test
@@ -261,7 +319,7 @@ public class ClientIntegrationTestIT {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testGetTemplateById() throws NotificationClientException {
         NotificationClient client = getClient();
         Template template = client.getTemplateById(System.getenv("LETTER_TEMPLATE_ID"));
@@ -309,7 +367,7 @@ public class ClientIntegrationTestIT {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testGetReceivedTextMessages() throws NotificationClientException {
         NotificationClient client = getClient("INBOUND_SMS_QUERY_KEY");
 
@@ -320,7 +378,7 @@ public class ClientIntegrationTestIT {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testSendPrecompiledLetterValidPDFFileIT() throws Exception {
         String reference = UUID.randomUUID().toString();
 
@@ -334,7 +392,7 @@ public class ClientIntegrationTestIT {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testSendPrecompiledLetterValidPDFFileITWithPostage() throws Exception {
         String reference = UUID.randomUUID().toString();
 
@@ -348,7 +406,7 @@ public class ClientIntegrationTestIT {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testSendPrecompiledLetterWithInputStream() throws Exception {
         String reference = UUID.randomUUID().toString();
 
@@ -363,7 +421,7 @@ public class ClientIntegrationTestIT {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testSendPrecompiledLetterWithInputStreamWithPostage() throws Exception {
         String reference = UUID.randomUUID().toString();
 
@@ -514,9 +572,9 @@ public class ClientIntegrationTestIT {
         }
 
         if(notification.getNotificationType().equals("letter")){
-            assertTrue("expected status to be accepted or received", Arrays.asList("accepted", "received").contains(notification.getStatus()));
+            assertTrue(Arrays.asList("accepted", "received").contains(notification.getStatus()), "expected status to be accepted or received");
         } else {
-            assertTrue("expected status to be created, sending or delivered", Arrays.asList("created", "sending", "delivered").contains(notification.getStatus()));
+            assertTrue(Arrays.asList("created", "sending", "delivered").contains(notification.getStatus()), "expected status to be created, sending or delivered");
         }
     }
 

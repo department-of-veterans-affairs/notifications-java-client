@@ -1,37 +1,65 @@
 package gov.va.vanotify;
 
 import org.json.JSONObject;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 public class SmsRequestTest {
-    @Test(expected = IllegalStateException.class)
-    public void smsRequestRequiresEmailAddress(){
-        new SmsRequest.Builder().withTemplateId(UUID.randomUUID().toString()).build();
+
+    public static Object[][] missingArgumentsTestData() {
+        return new Object[][]{
+                {null, null},
+                {"", null}
+        };
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void smsRequestRequiresTemplateId(){
-        new SmsRequest.Builder().withPhoneNumber("+12223334445").build();
+    @ParameterizedTest
+    @MethodSource("missingArgumentsTestData")
+    public void smsRequestRequiresEmailAddress(String phoneNumber, Identifier identifier){
+        assertThrows(IllegalStateException.class, () -> {
+            new SmsRequest.Builder()
+                    .withTemplateId(UUID.randomUUID().toString())
+                    .withPhoneNumber(phoneNumber)
+                    .withRecipientIdentifier(identifier)
+                    .build();
+        });
     }
 
     @Test
-    public void smsRequestCanBeCreatedWithOnlyRequiredFields(){
-        String templateId = UUID.randomUUID().toString();
-        String phoneNumber = "+12223334445";
+    public void smsRequestRequiresTemplateId(){
+        assertThrows(IllegalStateException.class, () -> {
+            new SmsRequest.Builder().withPhoneNumber("+12223334445").build();
+        });
+    }
+
+    public static Object[][] requiredArgumentsTestData() {
+        return new Object[][]{
+                {UUID.randomUUID().toString(), "+12223334445", null},
+                {UUID.randomUUID().toString(), null, new Identifier(IdentifierType.ICN, "1234")},
+        };
+    }
+
+    @ParameterizedTest
+    @MethodSource("requiredArgumentsTestData")
+    public void smsRequestCanBeCreatedWithOnlyRequiredFields(String templateId, String phoneNumber, Identifier identifier){
         SmsRequest request = new SmsRequest.Builder()
                 .withTemplateId(templateId)
                 .withPhoneNumber(phoneNumber)
+                .withRecipientIdentifier(identifier)
                 .build();
 
         assertEquals(phoneNumber, request.getPhoneNumber());
         assertEquals(templateId, request.getTemplateId());
+        assertEquals(identifier, request.getRecipientIdentifier());
         assertNull(request.getBillingCode());
         assertNull(request.getSmsSenderId());
         assertNull(request.getReference());
@@ -48,6 +76,7 @@ public class SmsRequestTest {
         Map<String, String> personalisation = new HashMap(){{
             put("foo", "bar");
         }};
+        Identifier identifier = new Identifier(IdentifierType.ICN, "1234");
 
 
         SmsRequest request = new SmsRequest.Builder()
@@ -57,6 +86,7 @@ public class SmsRequestTest {
                 .withReference(reference)
                 .withBillingCode(billingCode)
                 .withPersonalisation(personalisation)
+                .withRecipientIdentifier(identifier)
                 .build();
 
         JSONObject actual = request.asJson();
@@ -66,5 +96,7 @@ public class SmsRequestTest {
         assertEquals(reference, actual.getString("reference"));
         assertEquals(billingCode, actual.getString("billing_code"));
         assertEquals("bar", actual.getJSONObject("personalisation").getString("foo"));
+        assertEquals("ICN", actual.getJSONObject("recipient_identifier").getString("id_type"));
+        assertEquals(identifier.getValue(), actual.getJSONObject("recipient_identifier").getString("id_value"));
     }
 }

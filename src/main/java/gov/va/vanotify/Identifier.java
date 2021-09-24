@@ -19,6 +19,13 @@ public class Identifier {
         else { this.value = value + identifierType.suffix(); }
     }
 
+    public static Identifier fromJson(JSONObject json) {
+        return new Identifier(
+                IdentifierType.valueOf(json.getString("id_type")),
+                json.getString("id_value")
+        );
+    }
+
     public IdentifierType getIdentifierType() {
         return identifierType;
     }
@@ -27,7 +34,7 @@ public class Identifier {
         return value;
     }
 
-    JSONObject asJson() {
+    public JSONObject asJson() {
         JSONObject body = new JSONObject();
         body.put("id_type", this.identifierType.toString());
         body.put("id_value", this.value);
@@ -45,5 +52,13 @@ public class Identifier {
     @Override
     public int hashCode() {
         return Objects.hash(identifierType, value);
+    }
+
+    @Override
+    public String toString() {
+        return "Identifier{" +
+                "identifierType=" + identifierType +
+                ", value=" + value +
+                '}';
     }
 }

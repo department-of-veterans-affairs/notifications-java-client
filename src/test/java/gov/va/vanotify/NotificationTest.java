@@ -1,13 +1,18 @@
 package gov.va.vanotify;
 
 import org.joda.time.DateTime;
+import org.jose4j.json.internal.json_simple.JSONArray;
 import org.jose4j.json.internal.json_simple.JSONObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
+import static java.util.Arrays.asList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class NotificationTest {
 
@@ -43,6 +48,12 @@ public class NotificationTest {
         content.put("estimated_delivery", "2016-03-03T16:00:00.000Z");
         content.put("created_by_name", "John Doe");
         content.put("billing_code", "some-billing-code");
+        JSONObject recipientIdentifier = new JSONObject();
+        recipientIdentifier.put("id_type", IdentifierType.ICN.toString());
+        String identifierValue = UUID.randomUUID().toString();
+        recipientIdentifier.put("id_value", identifierValue + IdentifierType.ICN.suffix());
+        content.put("recipient_identifiers", new JSONArray(asList(recipientIdentifier)));
+
         Notification notification = new Notification(content.toString());
         assertEquals(UUID.fromString(id), notification.getId());
         assertEquals(Optional.of("client_reference"), notification.getReference());
@@ -69,6 +80,7 @@ public class NotificationTest {
         assertEquals(Optional.of(new DateTime("2016-03-03T16:00:00.000Z")), notification.getEstimatedDelivery());
         assertEquals(Optional.of("John Doe"), notification.getCreatedByName());
         assertEquals(Optional.of("some-billing-code"), notification.getBillingCode());
+        assertEquals(new Identifier(IdentifierType.ICN, identifierValue), notification.getRecipientIdentifiers().get(0));
     }
 
     @Test
@@ -104,6 +116,15 @@ public class NotificationTest {
         content.put("created_by_name", "John Doe");
         content.put("billing_code", "some-billing-code");
 
+        String firstIdentifierValue = UUID.randomUUID().toString();
+        Identifier firstIdentifier = new Identifier(IdentifierType.PID, firstIdentifierValue);
+        String secondIdentifierValue = UUID.randomUUID().toString();
+        Identifier secondIdentifier = new Identifier(IdentifierType.VAPROFILEID, secondIdentifierValue);
+        content.put("recipient_identifiers", new JSONArray(asList(
+                new JSONObject(firstIdentifier.asJson().toMap()),
+                new JSONObject(secondIdentifier.asJson().toMap())
+        )));
+
         Notification notification = new Notification(content.toString());
         assertEquals(UUID.fromString(id), notification.getId());
         assertEquals(Optional.of("client_reference"), notification.getReference());
@@ -131,6 +152,10 @@ public class NotificationTest {
         assertEquals(Optional.of(new DateTime("2016-03-03T16:00:00.000Z")), notification.getEstimatedDelivery());
         assertEquals(Optional.of("John Doe"), notification.getCreatedByName());
         assertEquals(Optional.of("some-billing-code"), notification.getBillingCode());
+        List<Identifier> actualIdentifiers = notification.getRecipientIdentifiers();
+        assertEquals(2, actualIdentifiers.size());
+        assertTrue(actualIdentifiers.contains(firstIdentifier));
+        assertTrue(actualIdentifiers.contains(secondIdentifier));
     }
 
 

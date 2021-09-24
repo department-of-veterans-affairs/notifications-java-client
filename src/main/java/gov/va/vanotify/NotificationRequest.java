@@ -10,6 +10,7 @@ public abstract class NotificationRequest {
     protected final Map<String, ?> personalisation;
     protected final String reference;
     protected final String billingCode;
+    protected final Identifier recipientIdentifier;
 
     protected NotificationRequest(Builder builder) {
         this.templateId = builder.templateId;
@@ -17,6 +18,7 @@ public abstract class NotificationRequest {
         this.personalisation = builder.personalisation;
         this.reference = builder.reference;
         this.billingCode = builder.billingCode;
+        this.recipientIdentifier = builder.recipientIdentifier;
 
         if (this.templateId == null || this.templateId.isEmpty()) throw new IllegalStateException("Missing templateId");
     }
@@ -37,6 +39,10 @@ public abstract class NotificationRequest {
         return billingCode;
     }
 
+    public Identifier getRecipientIdentifier() {
+        return recipientIdentifier;
+    }
+
     protected JSONObject asJson() {
         JSONObject body = new JSONObject();
 
@@ -54,7 +60,15 @@ public abstract class NotificationRequest {
             body.put("billing_code", billingCode);
         }
 
+        if(recipientIdentifier != null) {
+            body.put("recipient_identifier", recipientIdentifier.asJson());
+        }
+
         return body;
+    }
+
+    protected boolean missingRecipient() {
+        return this.recipient == null || this.recipient.isEmpty();
     }
 
     public abstract static class Builder<T extends NotificationRequest, B extends Builder> {
@@ -62,8 +76,8 @@ public abstract class NotificationRequest {
         protected String recipient;
         protected Map<String, ?> personalisation;
         protected String reference;
-        protected String emailReplyToId;
         protected String billingCode;
+        protected Identifier recipientIdentifier;
 
         protected abstract B getInstance();
 
@@ -109,18 +123,7 @@ public abstract class NotificationRequest {
         }
 
         /**
-         * Sets <b>optional</b> emailReplyToId.
-         * Will use the default service email reply to address if not provided.
-         * @param emailReplyToId    An optional identifier for a reply to email address for the notification, rather than use the service default.
-         *                          Service emailReplyToIds can be accessed via the service settings / manage email reply to addresses page.
-         * @return reference to itself (builder)
-         */
-        public B withEmailReplyToId(String emailReplyToId) {
-            this.emailReplyToId = emailReplyToId;
-            return this.getInstance();
-        }
-
-        /**
+         * Sets <b>optional</b> billing code.
          *
          * @param billingCode   A billing code specified by the service for the notification.
          *                      Used to group notifications for billing and reporting.
@@ -128,6 +131,19 @@ public abstract class NotificationRequest {
          */
         public B withBillingCode(String billingCode) {
             this.billingCode = billingCode;
+            return this.getInstance();
+        }
+
+        /**
+         * Sets VA identifier that is supported by Master Person Index
+         *
+         * @param recipientIdentifier   An object representing recipient identifier supported by MPI (Master Person Index) such as ICN, Participant Id, etc.
+         *                              This identifier will be used to query contact information and communication permissions (preferences) in VA Profile.
+         *                              Either recipientIdentifier or email address / phone number must be provided
+         * @return reference to itself (builder)
+         */
+        public B withRecipientIdentifier(Identifier recipientIdentifier) {
+            this.recipientIdentifier = recipientIdentifier;
             return this.getInstance();
         }
 
