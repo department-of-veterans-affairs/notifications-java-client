@@ -2,8 +2,10 @@ package gov.va.vanotify;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,15 +13,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class JsonUtilsTest {
 
     private Map<String, Object> expectedMap;
     private List<Object> expectedList;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         setUpMap();
         setUpList();
