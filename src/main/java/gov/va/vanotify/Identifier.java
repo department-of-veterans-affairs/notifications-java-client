@@ -1,13 +1,15 @@
 package gov.va.vanotify;
 
+import com.google.gson.annotations.SerializedName;
 import org.json.JSONObject;
 
 import java.util.Objects;
 
 public class Identifier {
+    @SerializedName("id_type")
     private final IdentifierType identifierType;
+    @SerializedName("id_value")
     private final String value;
-
 
     public Identifier(IdentifierType identifierType, String value) {
         if (value == null || value.isEmpty()) throw new IllegalStateException("Identifier value cannot be empty");

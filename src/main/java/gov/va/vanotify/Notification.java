@@ -1,7 +1,11 @@
 package gov.va.vanotify;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.SerializedName;
 import org.joda.time.DateTime;
 
+import org.joda.time.LocalDateTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -10,6 +14,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.google.gson.FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES;
+import static gov.va.vanotify.GsonConfiguration.gsonInstance;
 import static java.util.Collections.emptyList;
 
 public class Notification {
@@ -25,6 +31,7 @@ public class Notification {
     private String line6;
     private String postcode;
     private String postage;
+    @SerializedName("type")
     private String notificationType;
     private String status;
     private UUID templateId;
