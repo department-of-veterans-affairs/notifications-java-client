@@ -1,3 +1,35 @@
+## 1.2.0
+* Added support for sending notification requests with recipient identifiers supported by Master Person Index.
+Identifiers will be used to lookup contact information (email, phone number) as well as contact preferences in VA Profile.
+  
+  Currently supported identifiers include:
+  - `ICN` 
+  - `VA Profile Id`
+  - `Participant Id`
+  - `Birls Id (FileNumber)`
+  - `EDIPI`
+  
+You can send requests that contain only recipient identifier, for example:
+```java
+SendEmailResponse response = client.sendEmail(new EmailRequest.Builder()
+        .withTemplateId("aTemplateId")
+        .withRecipientIdentifier(new Identifier(IdentifierType.VAPROFILEID, "some-id");
+        .build()
+      );
+```
+
+Or you can specify both email / phone number and identifier. In that case identifier will be only used to lookup preferences.
+```java
+SendEmailResponse response = client.sendEmail(new EmailRequest.Builder()
+        .withTemplateId("aTemplateId")
+        .withEmailAddress("some@email.com")
+        .withRecipientIdentifier(new Identifier(IdentifierType.VAPROFILEID, "some-id");
+        .build()
+      );
+```
+
+* Moved all tests to Junit5.
+
 ## 1.1.0
 * Added EmailRequest with a fluent builder to avoid constructors with lots of same type optional arguments.
   You can use it as follows:
