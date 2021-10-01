@@ -1,4 +1,6 @@
 fileignoreconfig:
+  - filename: CONTRIBUTING.md
+    checksum: e2e8c5b2711b1b5445c1dff364795809289333ed90e7ec3e19b700d9df5a3054
   - filename: DOCUMENTATION.md
     checksum: 4aba218e64a7072365eeb0e9ac682f6eaea0d4cf48f713476b36be0686a45683
   - filename: src/main/java/gov/va/vanotify/EmailRequest.java

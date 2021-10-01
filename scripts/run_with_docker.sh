@@ -1,7 +1,7 @@
 #!/bin/bash
-DOCKER_IMAGE_NAME=notifications-java-client
+DOCKER_IMAGE_NAME=vanotify-java-client
 
-source environment.sh
+source .env
 
 docker run \
   --rm \
