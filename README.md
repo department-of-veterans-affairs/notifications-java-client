@@ -5,6 +5,6 @@ Use this client to send emails, text messages and letters using the [VANotify](h
 Useful links:
 
 - [Documentation](https://docs.notifications.service.gov.uk/java.html)
-- [Artifact repository](https://maven.pkg.github.com/department-of-veterans-affairs/notifications-java-client)
+- [Artifact repository](https://github.com/department-of-veterans-affairs/notifications-java-client/packages/990487)
 - [Changelog](https://github.com/department-of-veterans-affairs/notifications-java-client/blob/master/CHANGELOG.md)
 - [Contributing to this client](https://github.com/department-of-veterans-affairs/notifications-java-client/blob/master/CONTRIBUTING.md)
