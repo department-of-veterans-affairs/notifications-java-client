@@ -9,16 +9,9 @@ import java.util.List;
 public class TemplateList {
     private final List<Template> templates;
 
-    public TemplateList(String content){
-        JSONObject data = new JSONObject(content);
 
-        templates =  new ArrayList<>();
-
-        JSONArray templatesData = data.getJSONArray("templates");
-        for(int i = 0; i < templatesData.length(); i++){
-            JSONObject template = templatesData.getJSONObject(i);
-            templates.add(new Template(template));
-        }
+    public TemplateList(List<Template> templates) {
+        this.templates = templates;
     }
 
     public List<Template> getTemplates() {

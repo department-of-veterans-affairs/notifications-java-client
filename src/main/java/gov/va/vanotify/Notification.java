@@ -1,42 +1,35 @@
 package gov.va.vanotify;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 import org.joda.time.DateTime;
 
-import org.joda.time.LocalDateTime;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import static com.google.gson.FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES;
-import static gov.va.vanotify.GsonConfiguration.gsonInstance;
-import static java.util.Collections.emptyList;
 
 public class Notification {
     private UUID id;
     private String reference;
     private String emailAddress;
     private String phoneNumber;
+    @SerializedName("line_1")
     private String line1;
+    @SerializedName("line_2")
     private String line2;
+    @SerializedName("line_3")
     private String line3;
+    @SerializedName("line_4")
     private String line4;
+    @SerializedName("line_5")
     private String line5;
+    @SerializedName("line_6")
     private String line6;
     private String postcode;
     private String postage;
     @SerializedName("type")
     private String notificationType;
     private String status;
-    private UUID templateId;
-    private int templateVersion;
-    private String templateUri;
+    private TemplateDTO template;
     private String body;
     private String subject;
     private DateTime createdAt;
@@ -46,53 +39,6 @@ public class Notification {
     private String createdByName;
     private String billingCode;
     private List<Identifier> recipientIdentifiers;
-
-    public Notification(String content){
-        JSONObject responseBodyAsJson = new JSONObject(content);
-        build(responseBodyAsJson);
-    }
-
-    public Notification(JSONObject data){
-        build(data);
-    }
-
-    private void build(JSONObject data) {
-        id = UUID.fromString(data.getString("id"));
-        reference = data.isNull("reference") ? null : data.getString("reference");
-        emailAddress = data.isNull("email_address") ? null : data.getString("email_address");
-        phoneNumber = data.isNull("phone_number") ? null : data.getString("phone_number");
-        line1 = data.isNull("line_1") ? null : data.getString("line_1");
-        line2 = data.isNull("line_2") ? null : data.getString("line_2");
-        line3 = data.isNull("line_3") ? null : data.getString("line_3");
-        line4 = data.isNull("line_4") ? null : data.getString("line_4");
-        line5 = data.isNull("line_5") ? null : data.getString("line_5");
-        line6 = data.isNull("line_6") ? null : data.getString("line_6");
-        postcode = data.isNull("postcode") ? null : data.getString("postcode");
-        postage = data.isNull("postage") ? null : data.getString("postage");
-        notificationType = data.getString("type");
-        JSONObject template = data.getJSONObject("template");
-        templateId = UUID.fromString(template.getString("id"));
-        templateVersion = template.getInt("version");
-        templateUri = template.getString("uri");
-        body = data.getString("body");
-        subject = data.isNull("subject") ? null : data.getString("subject");
-        status = data.getString("status");
-        createdAt = new DateTime(data.getString("created_at"));
-        sentAt =  data.isNull("sent_at") ? null : new DateTime(data.getString("sent_at"));
-        completedAt = data.isNull("completed_at") ? null : new DateTime(data.getString("completed_at"));
-        estimatedDelivery = data.isNull("estimated_delivery") ? null : new DateTime(data.getString("estimated_delivery"));
-        createdByName = data.isNull("created_by_name") ? null : data.getString("created_by_name");
-        billingCode = data.isNull("billing_code") ? null : data.getString("billing_code");
-        recipientIdentifiers = data.isNull("recipient_identifiers") ? emptyList() : this.buildRecipientIdentifiers(data.getJSONArray("recipient_identifiers"));
-    }
-
-    private List<Identifier> buildRecipientIdentifiers(JSONArray recipientIdentifiers) {
-        List<Identifier> identifiers = new ArrayList<>();
-        for (int i = 0; i < recipientIdentifiers.length(); i++) {
-            identifiers.add(Identifier.fromJson(recipientIdentifiers.getJSONObject(i)));
-        }
-        return identifiers;
-    }
 
     public UUID getId() {
         return id;
@@ -150,15 +96,15 @@ public class Notification {
     }
 
     public UUID getTemplateId() {
-        return templateId;
+        return Optional.ofNullable(this.template).map(TemplateDTO::getId).orElse(null);
     }
 
     public int getTemplateVersion() {
-        return templateVersion;
+        return Optional.ofNullable(this.template).map(TemplateDTO::getVersion).orElse(null);
     }
 
     public String getTemplateUri(){
-        return templateUri;
+        return Optional.ofNullable(this.template).map(TemplateDTO::getUri).orElse(null);
     }
 
     public String getBody() {
@@ -212,9 +158,9 @@ public class Notification {
                 ", postcode='" + postcode + '\'' +
                 ", notificationType='" + notificationType + '\'' +
                 ", status='" + status + '\'' +
-                ", templateId=" + templateId +
-                ", templateVersion=" + templateVersion +
-                ", templateUri='" + templateUri + '\'' +
+                ", templateId=" + this.getTemplateId() +
+                ", templateVersion=" + this.getTemplateVersion() +
+                ", templateUri='" + this.getTemplateUri() + '\'' +
                 ", body='" + body + '\'' +
                 ", subject='" + subject + '\'' +
                 ", createdAt=" + createdAt +
@@ -226,4 +172,5 @@ public class Notification {
                 ", recipientIdentifier=" + recipientIdentifiers +
                 '}';
     }
+
 }

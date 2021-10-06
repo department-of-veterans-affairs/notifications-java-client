@@ -1,35 +1,25 @@
 package gov.va.vanotify;
 
+import com.google.gson.annotations.SerializedName;
 import org.json.JSONObject;
 
 import java.util.Optional;
 import java.util.UUID;
 
 public class SendEmailResponse {
+    @SerializedName("id")
     private final UUID notificationId;
     private final String reference;
-    private final UUID templateId;
-    private final int templateVersion;
-    private final String templateUri;
-    private final String body;
-    private final String subject;
-    private final String fromEmail;
+    private final TemplateDTO template;
+    private final Content content;
     private final String billingCode;
 
-
-    public SendEmailResponse(String response) {
-        JSONObject data = new JSONObject(response);
-        notificationId = UUID.fromString(data.getString("id"));
-        reference = data.isNull("reference") ? null : data.getString("reference");
-        billingCode = data.isNull("billing_code") ? null : data.getString("billing_code");
-        JSONObject content = data.getJSONObject("content");
-        body = content.getString("body");
-        fromEmail = content.isNull("from_email") ? null : content.getString("from_email");
-        subject = content.getString("subject");
-        JSONObject template = data.getJSONObject("template");
-        templateId = UUID.fromString(template.getString("id"));
-        templateVersion = template.getInt("version");
-        templateUri = template.getString("uri");
+    public SendEmailResponse(UUID notificationId, String reference, TemplateDTO template, Content content, String billingCode) {
+        this.notificationId = notificationId;
+        this.reference = reference;
+        this.template = template;
+        this.content = content;
+        this.billingCode = billingCode;
     }
 
     public UUID getNotificationId() {
@@ -41,27 +31,27 @@ public class SendEmailResponse {
     }
 
     public UUID getTemplateId() {
-        return templateId;
+        return template.getId();
     }
 
     public int getTemplateVersion() {
-        return templateVersion;
+        return template.getVersion();
     }
 
     public String getTemplateUri() {
-        return templateUri;
+        return template.getUri();
     }
 
     public String getBody() {
-        return body;
+        return content.getBody();
     }
 
     public String getSubject() {
-        return subject;
+        return content.getSubject();
     }
 
     public Optional<String> getFromEmail() {
-        return Optional.ofNullable(fromEmail);
+        return Optional.ofNullable(content.fromEmail);
     }
 
     public Optional<String> getBillingCode() {
@@ -73,14 +63,38 @@ public class SendEmailResponse {
         return "SendEmailResponse{" +
                 "notificationId=" + notificationId +
                 ", reference=" + reference +
-                ", templateId=" + templateId +
-                ", templateVersion=" + templateVersion +
-                ", templateUri='" + templateUri + '\'' +
-                ", body='" + body + '\'' +
-                ", subject='" + subject + '\'' +
-                ", fromEmail=" + fromEmail +
+                ", templateId=" + getTemplateId() +
+                ", templateVersion=" + getTemplateVersion() +
+                ", templateUri='" + getTemplateUri() + '\'' +
+                ", body='" + getBody() + '\'' +
+                ", subject='" + getSubject() + '\'' +
+                ", fromEmail=" + getFromEmail() +
                 ", billingCode=" + billingCode +
                 '}';
+    }
+
+    private class Content {
+        private final String body;
+        private final String subject;
+        private final String fromEmail;
+
+        public Content(String body, String subject, String fromEmail) {
+            this.body = body;
+            this.subject = subject;
+            this.fromEmail = fromEmail;
+        }
+
+        public String getBody() {
+            return body;
+        }
+
+        public String getSubject() {
+            return subject;
+        }
+
+        public String getFromEmail() {
+            return fromEmail;
+        }
     }
 
 

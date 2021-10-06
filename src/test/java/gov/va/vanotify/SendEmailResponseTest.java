@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 import java.util.UUID;
 
+import static gov.va.vanotify.GsonConfiguration.gsonInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SendEmailResponseTest {
@@ -30,7 +31,7 @@ public class SendEmailResponseTest {
         postEmailResponse.put("billing_code", "custom code");
 
 
-        SendEmailResponse response = new SendEmailResponse(postEmailResponse.toString());
+        SendEmailResponse response = gsonInstance.fromJson(postEmailResponse.toString(), SendEmailResponse.class);
         assertEquals(id, response.getNotificationId());
         assertEquals(Optional.of("clientReference"), response.getReference());
         assertEquals(templateId, response.getTemplateId());

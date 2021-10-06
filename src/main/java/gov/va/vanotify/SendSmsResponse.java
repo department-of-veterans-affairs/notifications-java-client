@@ -1,33 +1,25 @@
 package gov.va.vanotify;
 
+import com.google.gson.annotations.SerializedName;
 import org.json.JSONObject;
 
 import java.util.Optional;
 import java.util.UUID;
 
 public class SendSmsResponse {
+    @SerializedName("id")
     private final UUID notificationId;
     private final String reference;
-    private final UUID templateId;
-    private final int templateVersion;
-    private final String templateUri;
-    private final String body;
-    private final String fromNumber;
+    private final TemplateDTO template;
+    private final Content content;
     private final String billingCode;
 
-
-    public SendSmsResponse(String response) {
-        JSONObject data = new JSONObject(response);
-        notificationId = UUID.fromString(data.getString("id"));
-        reference = data.isNull("reference") ? null : data.getString("reference");
-        billingCode = data.isNull("billing_code") ? null : data.getString("billing_code");
-        JSONObject content = data.getJSONObject("content");
-        body = content.getString("body");
-        fromNumber = content.isNull("from_number") ? null : content.getString("from_number");
-        JSONObject template = data.getJSONObject("template");
-        templateId = UUID.fromString(template.getString("id"));
-        templateVersion = template.getInt("version");
-        templateUri = template.getString("uri");
+    public SendSmsResponse(UUID notificationId, String reference, TemplateDTO template, Content content, String billingCode) {
+        this.notificationId = notificationId;
+        this.reference = reference;
+        this.template = template;
+        this.content = content;
+        this.billingCode = billingCode;
     }
 
     public UUID getNotificationId() {
@@ -39,23 +31,23 @@ public class SendSmsResponse {
     }
 
     public UUID getTemplateId() {
-        return templateId;
+        return template.getId();
     }
 
     public int getTemplateVersion() {
-        return templateVersion;
+        return template.getVersion();
     }
 
     public String getTemplateUri() {
-        return templateUri;
+        return template.getUri();
     }
 
     public String getBody() {
-        return body;
+        return content.getBody();
     }
 
     public Optional<String> getFromNumber() {
-        return Optional.ofNullable(fromNumber);
+        return Optional.ofNullable(content.getFromNumber());
     }
 
     public Optional<String> getBillingCode() { return Optional.ofNullable(billingCode); }
@@ -65,13 +57,31 @@ public class SendSmsResponse {
         return "SendSmsResponse{" +
                 "notificationId=" + notificationId +
                 ", reference=" + reference +
-                ", templateId=" + templateId +
-                ", templateVersion=" + templateVersion +
-                ", templateUri='" + templateUri + '\'' +
-                ", body='" + body + '\'' +
-                ", fromNumber=" + fromNumber +
+                ", templateId=" + getTemplateId() +
+                ", templateVersion=" + getTemplateVersion() +
+                ", templateUri='" + getTemplateUri() + '\'' +
+                ", body='" + getBody() + '\'' +
+                ", fromNumber=" + getFromNumber() +
                 ", billingCode=" + billingCode +
                 '}';
+    }
+
+    private class Content {
+        private final String body;
+        private final String fromNumber;
+
+        public Content(String body, String fromNumber) {
+            this.body = body;
+            this.fromNumber = fromNumber;
+        }
+
+        public String getBody() {
+            return body;
+        }
+
+        public String getFromNumber() {
+            return fromNumber;
+        }
     }
 }
 

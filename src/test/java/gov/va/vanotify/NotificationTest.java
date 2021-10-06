@@ -125,7 +125,7 @@ public class NotificationTest {
                 new JSONObject(secondIdentifier.asJson().toMap())
         )));
 
-        Notification notification = new Notification(content.toString());
+        Notification notification = gsonInstance.fromJson(content.toString(), Notification.class);
         assertEquals(UUID.fromString(id), notification.getId());
         assertEquals(Optional.of("client_reference"), notification.getReference());
         assertEquals(UUID.fromString(templateId), notification.getTemplateId());
@@ -191,7 +191,7 @@ public class NotificationTest {
         content.put("estimated_delivery", "2016-03-03T16:00:00.000Z");
         content.put("created_by_name", "John Doe");
 
-        Notification notification = new Notification(content.toString());
+        Notification notification = gsonInstance.fromJson(content.toString(), Notification.class);
         assertEquals(UUID.fromString(id), notification.getId());
         assertEquals(Optional.of("client_reference"), notification.getReference());
         assertEquals(UUID.fromString(templateId), notification.getTemplateId());

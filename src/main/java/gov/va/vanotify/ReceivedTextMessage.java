@@ -13,26 +13,6 @@ public class ReceivedTextMessage {
     private String content;
     private DateTime createdAt;
 
-    public ReceivedTextMessage(String json){
-        JSONObject responseBodyAsJson = new JSONObject(json);
-        build(responseBodyAsJson);
-    }
-
-    public ReceivedTextMessage(org.json.JSONObject data){
-        build(data);
-    }
-
-    private void build(JSONObject data) {
-        id = UUID.fromString(data.getString("id"));
-
-        notifyNumber= data.getString("notify_number");
-        userNumber = data.getString("user_number");
-        serviceId = UUID.fromString(data.getString("service_id"));
-        content = data.getString("content");
-        createdAt = new DateTime(data.getString("created_at"));
-    }
-
-
     public UUID getId() {
         return id;
     }

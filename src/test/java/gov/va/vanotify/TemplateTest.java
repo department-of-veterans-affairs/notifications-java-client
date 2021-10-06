@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import static gov.va.vanotify.GsonConfiguration.gsonInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TemplateTest {
@@ -35,7 +36,7 @@ public class TemplateTest {
 
         content.put("personalisation", personalisation);
 
-        Template template = new Template(content.toString());
+        Template template = gsonInstance.fromJson(content.toString(), Template.class);
         assertEquals(UUID.fromString(id), template.getId());
         assertEquals("my template", template.getName());
         assertEquals("email", template.getTemplateType());
@@ -68,7 +69,7 @@ public class TemplateTest {
         content.put("subject", null);
         content.put("personalisation", null);
 
-        Template template = new Template(content.toString());
+        Template template = gsonInstance.fromJson(content.toString(), Template.class);
         assertEquals(UUID.fromString(id), template.getId());
         assertEquals("my template", template.getName());
         assertEquals("email", template.getTemplateType());

@@ -1,11 +1,13 @@
 package gov.va.vanotify;
 
+import com.google.gson.annotations.SerializedName;
 import org.json.JSONObject;
 
 import java.util.Optional;
 import java.util.UUID;
 
 public class LetterResponse {
+    @SerializedName("id")
     private final UUID notificationId;
     private final String reference;
     private final String postage;

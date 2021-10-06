@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 import java.util.UUID;
 
+import static gov.va.vanotify.GsonConfiguration.gsonInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TemplatePreviewTest {
@@ -20,7 +21,7 @@ public class TemplatePreviewTest {
         content.put("body", "The body of the template. For ((name)) eyes only.");
         content.put("subject", "Private email");
 
-        TemplatePreview template = new TemplatePreview(content.toString());
+        TemplatePreview template = gsonInstance.fromJson(content.toString(), TemplatePreview.class);
         assertEquals(UUID.fromString(id), template.getId());
         assertEquals("email", template.getTemplateType());
         assertEquals(3, template.getVersion());
@@ -40,7 +41,7 @@ public class TemplatePreviewTest {
         content.put("subject", "Private email");
         content.put("html", "html version of the body");
 
-        TemplatePreview template = new TemplatePreview(content.toString());
+        TemplatePreview template = gsonInstance.fromJson(content.toString(), TemplatePreview.class);
         assertEquals(UUID.fromString(id), template.getId());
         assertEquals("email", template.getTemplateType());
         assertEquals(3, template.getVersion());

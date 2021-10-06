@@ -25,6 +25,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static gov.va.vanotify.GsonConfiguration.gsonInstance;
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -136,7 +137,7 @@ public class NotificationClient implements NotificationClientApi {
     public SendEmailResponse sendEmail(EmailRequest emailRequest) throws NotificationClientException {
         HttpURLConnection conn = createConnectionAndSetHeaders(baseUrl + "/v2/notifications/email", "POST");
         String response = performPostRequest(conn, emailRequest.asJson(), HttpsURLConnection.HTTP_CREATED);
-        return new SendEmailResponse(response);
+        return gsonInstance.fromJson(response, SendEmailResponse.class);
     }
 
     public SendEmailResponse sendEmail(String templateId,
@@ -171,13 +172,13 @@ public class NotificationClient implements NotificationClientApi {
 
         HttpURLConnection conn = createConnectionAndSetHeaders(baseUrl + "/v2/notifications/email", "POST");
         String response = performPostRequest(conn, body, HttpsURLConnection.HTTP_CREATED);
-        return new SendEmailResponse(response);
+        return gsonInstance.fromJson(response, SendEmailResponse.class);
     }
 
     public SendSmsResponse sendSms(SmsRequest smsRequest) throws NotificationClientException {
         HttpURLConnection conn = createConnectionAndSetHeaders(baseUrl + "/v2/notifications/sms", "POST");
         String response = performPostRequest(conn, smsRequest.asJson(), HttpsURLConnection.HTTP_CREATED);
-        return new SendSmsResponse(response);
+        return gsonInstance.fromJson(response, SendSmsResponse.class);
     }
 
     public SendSmsResponse sendSms(String templateId, String phoneNumber, Map<String, ?> personalisation, String reference, String billingCode) throws NotificationClientException {
@@ -205,7 +206,7 @@ public class NotificationClient implements NotificationClientApi {
         }
         HttpURLConnection conn = createConnectionAndSetHeaders(baseUrl + "/v2/notifications/sms", "POST");
         String response = performPostRequest(conn, body, HttpsURLConnection.HTTP_CREATED);
-        return new SendSmsResponse(response);
+        return gsonInstance.fromJson(response, SendSmsResponse.class);
     }
 
     public SendLetterResponse sendLetter(String templateId, Map<String, ?> personalisation, String reference) throws NotificationClientException {
@@ -219,7 +220,7 @@ public class NotificationClient implements NotificationClientApi {
         String url = baseUrl + "/v2/notifications/" + notificationId;
         HttpURLConnection conn = createConnectionAndSetHeaders(url, "GET");
         String response = performGetRequest(conn);
-        return new Notification(response);
+        return gsonInstance.fromJson(response, Notification.class);
 
     }
 
@@ -248,7 +249,7 @@ public class NotificationClient implements NotificationClientApi {
 
             HttpURLConnection conn = createConnectionAndSetHeaders(builder.toString(), "GET");
             String response = performGetRequest(conn);
-            return new NotificationList(response);
+            return gsonInstance.fromJson(response, NotificationList.class);
         } catch (URISyntaxException e) {
             LOGGER.log(Level.SEVERE, e.toString(), e);
             throw new NotificationClientException(e);
@@ -259,14 +260,14 @@ public class NotificationClient implements NotificationClientApi {
         String url = baseUrl + "/v2/template/" + templateId;
         HttpURLConnection conn = createConnectionAndSetHeaders(url, "GET");
         String response = performGetRequest(conn);
-        return new Template(response);
+        return gsonInstance.fromJson(response, Template.class);
     }
 
     public Template getTemplateVersion(String templateId, int version) throws NotificationClientException{
         String url = baseUrl + "/v2/template/" + templateId + "/version/" + version;
         HttpURLConnection conn = createConnectionAndSetHeaders(url, "GET");
         String response = performGetRequest(conn);
-        return new Template(response);
+        return gsonInstance.fromJson(response, Template.class);
     }
 
     public TemplateList getAllTemplates(String templateType) throws NotificationClientException{
@@ -277,7 +278,7 @@ public class NotificationClient implements NotificationClientApi {
             }
             HttpURLConnection conn = createConnectionAndSetHeaders(builder.toString(), "GET");
             String response = performGetRequest(conn);
-            return new TemplateList(response);
+            return gsonInstance.fromJson(response, TemplateList.class);
         } catch (URISyntaxException e) {
             LOGGER.log(Level.SEVERE, e.toString(), e);
             throw new NotificationClientException(e);
@@ -291,7 +292,7 @@ public class NotificationClient implements NotificationClientApi {
         }
         HttpURLConnection conn = createConnectionAndSetHeaders(baseUrl + "/v2/template/" + templateId + "/preview", "POST");
         String response = performPostRequest(conn, body, HttpsURLConnection.HTTP_OK);
-        return new TemplatePreview(response);
+        return gsonInstance.fromJson(response, TemplatePreview.class);
     }
 
     public ReceivedTextMessageList getReceivedTextMessages(String olderThanId) throws NotificationClientException {
@@ -302,7 +303,7 @@ public class NotificationClient implements NotificationClientApi {
             }
             HttpURLConnection conn = createConnectionAndSetHeaders(builder.toString(), "GET");
             String response = performGetRequest(conn);
-            return new ReceivedTextMessageList(response);
+            return gsonInstance.fromJson(response, ReceivedTextMessageList.class);
         } catch (URISyntaxException e){
             LOGGER.log(Level.SEVERE, e.toString(), e);
             throw new NotificationClientException(e);

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 import java.util.UUID;
 
+import static gov.va.vanotify.GsonConfiguration.gsonInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ReceivedTextMessageListTest {
@@ -46,7 +47,7 @@ public class ReceivedTextMessageListTest {
         links.put("next", null);
         content.put("links", links);
 
-        ReceivedTextMessageList result = new ReceivedTextMessageList(content.toString());
+        ReceivedTextMessageList result = gsonInstance.fromJson(content.toString(), ReceivedTextMessageList.class);
         assertEquals(2, result.getReceivedTextMessages().size());
         assertEquals("https://api.notifications.va.gov/received-text-messages", result.getCurrentPageLink());
         assertEquals(Optional.<String>empty(), result.getNextPageLink());

@@ -10,13 +10,9 @@ import static com.google.gson.FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES;
 
 public class GsonConfiguration {
 
-    public static final Gson baseGson = new GsonBuilder()
+    public static final Gson gsonInstance = new GsonBuilder()
             .setFieldNamingPolicy(LOWER_CASE_WITH_UNDERSCORES)
             .registerTypeAdapter(DateTime.class, new LocalDateTimeTypeConverter())
-            .create();
-
-    public static final Gson gsonInstance = baseGson.newBuilder()
-            .registerTypeAdapter(Notification.class, new NotificationDeserializer())
             .create();
 
     private static class LocalDateTimeTypeConverter

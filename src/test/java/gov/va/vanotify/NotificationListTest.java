@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 import java.util.UUID;
 
+import static gov.va.vanotify.GsonConfiguration.gsonInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -101,7 +102,7 @@ public class NotificationListTest {
         content.put("links", links);
 
 
-        NotificationList result = new NotificationList(content.toString());
+        NotificationList result = gsonInstance.fromJson(content.toString(), NotificationList.class);
         assertEquals(3, result.getNotifications().size());
         assertEquals("https://api.notifications.va.gov/notifications", result.getCurrentPageLink());
         assertEquals(Optional.<String>empty(), result.getNextPageLink());
