@@ -2,11 +2,10 @@ package gov.va.vanotify;
 
 import com.google.gson.annotations.SerializedName;
 import org.joda.time.DateTime;
-import org.json.JSONObject;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.Map;
 
 public class Template {
     private UUID id;

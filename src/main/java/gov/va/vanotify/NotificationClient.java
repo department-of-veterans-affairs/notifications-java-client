@@ -136,7 +136,7 @@ public class NotificationClient implements NotificationClientApi {
 
     public SendEmailResponse sendEmail(EmailRequest emailRequest) throws NotificationClientException {
         HttpURLConnection conn = createConnectionAndSetHeaders(baseUrl + "/v2/notifications/email", "POST");
-        String response = performPostRequest(conn, emailRequest.asJson(), HttpsURLConnection.HTTP_CREATED);
+        String response = performPostRequest(conn, gsonInstance.toJson(emailRequest), HttpsURLConnection.HTTP_CREATED);
         return gsonInstance.fromJson(response, SendEmailResponse.class);
     }
 
@@ -171,13 +171,13 @@ public class NotificationClient implements NotificationClientApi {
         }
 
         HttpURLConnection conn = createConnectionAndSetHeaders(baseUrl + "/v2/notifications/email", "POST");
-        String response = performPostRequest(conn, body, HttpsURLConnection.HTTP_CREATED);
+        String response = performPostRequest(conn, body.toString(), HttpsURLConnection.HTTP_CREATED);
         return gsonInstance.fromJson(response, SendEmailResponse.class);
     }
 
     public SendSmsResponse sendSms(SmsRequest smsRequest) throws NotificationClientException {
         HttpURLConnection conn = createConnectionAndSetHeaders(baseUrl + "/v2/notifications/sms", "POST");
-        String response = performPostRequest(conn, smsRequest.asJson(), HttpsURLConnection.HTTP_CREATED);
+        String response = performPostRequest(conn, gsonInstance.toJson(smsRequest), HttpsURLConnection.HTTP_CREATED);
         return gsonInstance.fromJson(response, SendSmsResponse.class);
     }
 
@@ -205,15 +205,15 @@ public class NotificationClient implements NotificationClientApi {
             body.put(" ", smsSenderId);
         }
         HttpURLConnection conn = createConnectionAndSetHeaders(baseUrl + "/v2/notifications/sms", "POST");
-        String response = performPostRequest(conn, body, HttpsURLConnection.HTTP_CREATED);
+        String response = performPostRequest(conn, body.toString(), HttpsURLConnection.HTTP_CREATED);
         return gsonInstance.fromJson(response, SendSmsResponse.class);
     }
 
     public SendLetterResponse sendLetter(String templateId, Map<String, ?> personalisation, String reference) throws NotificationClientException {
         JSONObject body = createBodyForPostRequest(templateId, null, null, personalisation, reference, null, null, null);
         HttpURLConnection conn = createConnectionAndSetHeaders(baseUrl + "/v2/notifications/letter", "POST");
-        String response = performPostRequest(conn, body, HttpsURLConnection.HTTP_CREATED);
-        return new SendLetterResponse(response);
+        String response = performPostRequest(conn, body.toString(), HttpsURLConnection.HTTP_CREATED);
+        return gsonInstance.fromJson(response, SendLetterResponse.class);
     }
 
     public Notification getNotificationById(String notificationId) throws NotificationClientException {
@@ -291,7 +291,7 @@ public class NotificationClient implements NotificationClientApi {
             body.put("personalisation", new JSONObject(personalisation));
         }
         HttpURLConnection conn = createConnectionAndSetHeaders(baseUrl + "/v2/template/" + templateId + "/preview", "POST");
-        String response = performPostRequest(conn, body, HttpsURLConnection.HTTP_OK);
+        String response = performPostRequest(conn, body.toString(), HttpsURLConnection.HTTP_OK);
         return gsonInstance.fromJson(response, TemplatePreview.class);
     }
 
@@ -342,10 +342,10 @@ public class NotificationClient implements NotificationClientApi {
         return prepareUpload(documentContents, false);
     }
 
-    private String performPostRequest(HttpURLConnection conn, JSONObject body, int expectedStatusCode) throws NotificationClientException {
+    private String performPostRequest(HttpURLConnection conn, String body, int expectedStatusCode) throws NotificationClientException {
         try{
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream(), UTF_8);
-            wr.write(body.toString());
+            wr.write(body);
             wr.flush();
 
             int httpResult = conn.getResponseCode();
@@ -576,8 +576,8 @@ public class NotificationClient implements NotificationClientApi {
                 "POST"
         );
 
-        String response = performPostRequest(conn, body, HttpsURLConnection.HTTP_CREATED);
-        return new LetterResponse(response);
+        String response = performPostRequest(conn, body.toString(), HttpsURLConnection.HTTP_CREATED);
+        return gsonInstance.fromJson(response, LetterResponse.class);
 
     }
 

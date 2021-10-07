@@ -1,7 +1,6 @@
 package gov.va.vanotify;
 
 import com.google.gson.annotations.SerializedName;
-import org.json.JSONObject;
 
 import java.util.Optional;
 import java.util.UUID;

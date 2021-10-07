@@ -1,12 +1,13 @@
 package gov.va.vanotify;
 
-import org.json.JSONObject;
+import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.UUID;
 
+import static gov.va.vanotify.GsonConfiguration.gsonInstance;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class IdentifierTest {
@@ -70,21 +71,21 @@ public class IdentifierTest {
     @MethodSource("asJsonTestData")
     public void shouldSerializeToExpectedJsonStructure(IdentifierType identifierType, String value) {
         Identifier identifier = new Identifier(identifierType, value);
-        JSONObject actual = identifier.asJson();
-        assertEquals(actual.getString("id_type"), identifier.getIdentifierType().toString());
-        assertEquals(actual.getString("id_value"), identifier.getValue());
+        JsonObject actual = gsonInstance.toJsonTree(identifier).getAsJsonObject();
+        assertEquals(actual.get("id_type").getAsString(), identifier.getIdentifierType().toString());
+        assertEquals(actual.get("id_value").getAsString(), identifier.getValue());
     }
 
     @Test
     public void shouldCreateFromJson() {
-        JSONObject json = new JSONObject();
-        json.put("id_type", IdentifierType.ICN.toString());
+        JsonObject json = new JsonObject();
+        json.addProperty("id_type", IdentifierType.ICN.toString());
         String identifierValue = UUID.randomUUID().toString();
-        json.put("id_value", identifierValue);
+        json.addProperty("id_value", identifierValue);
 
-        Identifier actual = Identifier.fromJson(json);
-        assertEquals(actual.getIdentifierType(), IdentifierType.ICN);
-        assertEquals(actual.getValue(), identifierValue + IdentifierType.ICN.suffix());
+        Identifier actual = gsonInstance.fromJson(json, Identifier.class);
+        assertEquals(IdentifierType.ICN, actual.getIdentifierType());
+        assertEquals(identifierValue + IdentifierType.ICN.suffix(), actual.getValue());
     }
 
 

@@ -1,7 +1,5 @@
 package gov.va.vanotify;
 
-import org.json.JSONObject;
-
 /**
  * Represents SMS notification request
  * To create an instance use the static builder with fluent API
@@ -10,34 +8,24 @@ import org.json.JSONObject;
  */
 public class SmsRequest extends NotificationRequest {
     private final String smsSenderId;
+    private final String phoneNumber;
 
     private SmsRequest(Builder builder) {
         super(builder);
         this.smsSenderId = builder.smsSenderId;
+        this.phoneNumber = builder.recipient;
         if (this.missingRecipient() && this.recipientIdentifier == null) throw new IllegalStateException("Missing at least one of phoneNumber and recipientIdentifier");
     }
 
+    private boolean missingRecipient() {
+        return this.phoneNumber == null || this.phoneNumber.isEmpty();
+    }
     public String getPhoneNumber() {
-        return recipient;
+        return phoneNumber;
     }
 
     public String getSmsSenderId() {
         return smsSenderId;
-    }
-
-    @Override
-    public JSONObject asJson() {
-        JSONObject body = super.asJson();
-
-        if(recipient != null && !recipient.isEmpty()) {
-            body.put("phone_number", recipient);
-        }
-
-        if(smsSenderId != null && !smsSenderId.isEmpty())
-        {
-            body.put("sms_sender_id", smsSenderId);
-        }
-        return body;
     }
 
     /**

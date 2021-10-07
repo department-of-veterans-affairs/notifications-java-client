@@ -1,7 +1,6 @@
 package gov.va.vanotify;
 
 import org.joda.time.DateTime;
-import org.json.JSONObject;
 
 import java.util.UUID;
 

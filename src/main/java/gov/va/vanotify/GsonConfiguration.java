@@ -13,6 +13,7 @@ public class GsonConfiguration {
     public static final Gson gsonInstance = new GsonBuilder()
             .setFieldNamingPolicy(LOWER_CASE_WITH_UNDERSCORES)
             .registerTypeAdapter(DateTime.class, new LocalDateTimeTypeConverter())
+            .registerTypeAdapter(Identifier.class, new Identifier.IdentifierDeserializer())
             .create();
 
     private static class LocalDateTimeTypeConverter

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 import java.util.UUID;
 
+import static gov.va.vanotify.GsonConfiguration.gsonInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -29,7 +30,7 @@ public class SendLetterResponseTest {
         postLetterResponse.put("content", content);
 
 
-        SendLetterResponse response = new SendLetterResponse(postLetterResponse.toString());
+        SendLetterResponse response = gsonInstance.fromJson(postLetterResponse.toString(), SendLetterResponse.class);
         assertEquals(id, response.getNotificationId());
         assertEquals(Optional.of("clientReference"), response.getReference());
         assertEquals(templateId, response.getTemplateId());
@@ -57,7 +58,7 @@ public class SendLetterResponseTest {
                 "  \"uri\": \"https://api.notify.works/v2/notifications/notification_id\"\n" +
                 "}";
 
-        SendLetterResponse response = new SendLetterResponse(precompiledPdfResponse);
+        SendLetterResponse response = gsonInstance.fromJson(precompiledPdfResponse, SendLetterResponse.class);
         assertEquals("5f88e576-c97a-4262-a74b-f558882ca1c8", response.getNotificationId().toString());
         assertEquals(Optional.of("reference"), response.getReference());
         assertEquals("1d7b2fac-bb0d-46c6-96e7-d4afa6e22a92", response.getTemplateId().toString());

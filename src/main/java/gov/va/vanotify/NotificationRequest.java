@@ -1,12 +1,9 @@
 package gov.va.vanotify;
 
-import org.json.JSONObject;
-
 import java.util.Map;
 
 public abstract class NotificationRequest {
     protected final String templateId;
-    protected final String recipient;
     protected final Map<String, ?> personalisation;
     protected final String reference;
     protected final String billingCode;
@@ -14,7 +11,6 @@ public abstract class NotificationRequest {
 
     protected NotificationRequest(Builder builder) {
         this.templateId = builder.templateId;
-        this.recipient = builder.recipient;
         this.personalisation = builder.personalisation;
         this.reference = builder.reference;
         this.billingCode = builder.billingCode;
@@ -41,34 +37,6 @@ public abstract class NotificationRequest {
 
     public Identifier getRecipientIdentifier() {
         return recipientIdentifier;
-    }
-
-    protected JSONObject asJson() {
-        JSONObject body = new JSONObject();
-
-        body.put("template_id", templateId);
-
-        if (personalisation != null && !personalisation.isEmpty()) {
-            body.put("personalisation", personalisation);
-        }
-
-        if(reference != null && !reference.isEmpty()){
-            body.put("reference", reference);
-        }
-
-        if(billingCode != null && !billingCode.isEmpty()){
-            body.put("billing_code", billingCode);
-        }
-
-        if(recipientIdentifier != null) {
-            body.put("recipient_identifier", recipientIdentifier.asJson());
-        }
-
-        return body;
-    }
-
-    protected boolean missingRecipient() {
-        return this.recipient == null || this.recipient.isEmpty();
     }
 
     public abstract static class Builder<T extends NotificationRequest, B extends Builder> {

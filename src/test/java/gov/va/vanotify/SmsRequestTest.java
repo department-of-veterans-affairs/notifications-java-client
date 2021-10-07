@@ -1,5 +1,6 @@
 package gov.va.vanotify;
 
+import com.google.gson.JsonObject;
 import org.json.JSONObject;
 
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static gov.va.vanotify.GsonConfiguration.gsonInstance;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -89,14 +91,14 @@ public class SmsRequestTest {
                 .withRecipientIdentifier(identifier)
                 .build();
 
-        JSONObject actual = request.asJson();
-        assertEquals(templateId, actual.getString("template_id"));
-        assertEquals(phoneNumber, actual.getString("phone_number"));
-        assertEquals(smsSenderId, actual.getString("sms_sender_id"));
-        assertEquals(reference, actual.getString("reference"));
-        assertEquals(billingCode, actual.getString("billing_code"));
-        assertEquals("bar", actual.getJSONObject("personalisation").getString("foo"));
-        assertEquals("ICN", actual.getJSONObject("recipient_identifier").getString("id_type"));
-        assertEquals(identifier.getValue(), actual.getJSONObject("recipient_identifier").getString("id_value"));
+        JsonObject actual = gsonInstance.toJsonTree(request).getAsJsonObject();
+        assertEquals(templateId, actual.get("template_id").getAsString());
+        assertEquals(phoneNumber, actual.get("phone_number").getAsString());
+        assertEquals(smsSenderId, actual.get("sms_sender_id").getAsString());
+        assertEquals(reference, actual.get("reference").getAsString());
+        assertEquals(billingCode, actual.get("billing_code").getAsString());
+        assertEquals("bar", actual.getAsJsonObject("personalisation").get("foo").getAsString());
+        assertEquals("ICN", actual.getAsJsonObject("recipient_identifier").get("id_type").getAsString());
+        assertEquals(identifier.getValue(), actual.getAsJsonObject("recipient_identifier").get("id_value").getAsString());
     }
 }
