@@ -1,6 +1,6 @@
 package gov.va.vanotify;
 
-import org.jose4j.json.internal.json_simple.JSONObject;
+import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -13,13 +13,13 @@ public class TemplatePreviewTest {
 
     @Test
     public void testTemplatePreview_canCreateObjectFromJson() {
-        JSONObject content = new JSONObject();
+        JsonObject content = new JsonObject();
         String id = UUID.randomUUID().toString();
-        content.put("id", id);
-        content.put("type", "email");
-        content.put("version", 3);
-        content.put("body", "The body of the template. For ((name)) eyes only.");
-        content.put("subject", "Private email");
+        content.addProperty("id", id);
+        content.addProperty("type", "email");
+        content.addProperty("version", 3);
+        content.addProperty("body", "The body of the template. For ((name)) eyes only.");
+        content.addProperty("subject", "Private email");
 
         TemplatePreview template = gsonInstance.fromJson(content.toString(), TemplatePreview.class);
         assertEquals(UUID.fromString(id), template.getId());
@@ -32,14 +32,14 @@ public class TemplatePreviewTest {
 
     @Test
     public void testTemplatePreview_canCreateObjectFromJsonWithHtml() {
-        JSONObject content = new JSONObject();
+        JsonObject content = new JsonObject();
         String id = UUID.randomUUID().toString();
-        content.put("id", id);
-        content.put("type", "email");
-        content.put("version", 3);
-        content.put("body", "The body of the template. For ((name)) eyes only.");
-        content.put("subject", "Private email");
-        content.put("html", "html version of the body");
+        content.addProperty("id", id);
+        content.addProperty("type", "email");
+        content.addProperty("version", 3);
+        content.addProperty("body", "The body of the template. For ((name)) eyes only.");
+        content.addProperty("subject", "Private email");
+        content.addProperty("html", "html version of the body");
 
         TemplatePreview template = gsonInstance.fromJson(content.toString(), TemplatePreview.class);
         assertEquals(UUID.fromString(id), template.getId());

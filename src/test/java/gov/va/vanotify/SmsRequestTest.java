@@ -1,8 +1,6 @@
 package gov.va.vanotify;
 
 import com.google.gson.JsonObject;
-import org.json.JSONObject;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;

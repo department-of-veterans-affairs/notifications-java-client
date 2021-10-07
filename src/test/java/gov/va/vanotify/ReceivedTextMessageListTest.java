@@ -1,7 +1,7 @@
 package gov.va.vanotify;
 
-import org.jose4j.json.internal.json_simple.JSONArray;
-import org.jose4j.json.internal.json_simple.JSONObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -15,37 +15,37 @@ public class ReceivedTextMessageListTest {
     @Test
     public void testReceivedTextMessageList_canCreateObjectFromJson(){
 
-        JSONObject receivedTextMessage = new JSONObject();
+        JsonObject receivedTextMessage = new JsonObject();
         String id = UUID.randomUUID().toString();
         String serviceId = UUID.randomUUID().toString();
-        receivedTextMessage.put("id", id);
-        receivedTextMessage.put("notify_number", "447700900111");
-        receivedTextMessage.put("user_number", "447700900000");
-        receivedTextMessage.put("service_id", serviceId);
-        receivedTextMessage.put("content", "message 1");
-        receivedTextMessage.put("receivedTextMessage", "Content of the message from the user");
-        receivedTextMessage.put("created_at", "2016-03-01T08:30:00.000Z");
+        receivedTextMessage.addProperty("id", id);
+        receivedTextMessage.addProperty("notify_number", "447700900111");
+        receivedTextMessage.addProperty("user_number", "447700900000");
+        receivedTextMessage.addProperty("service_id", serviceId);
+        receivedTextMessage.addProperty("content", "message 1");
+        receivedTextMessage.addProperty("receivedTextMessage", "Content of the message from the user");
+        receivedTextMessage.addProperty("created_at", "2016-03-01T08:30:00.000Z");
 
-        JSONObject receivedTextMessage2 = new JSONObject();
+        JsonObject receivedTextMessage2 = new JsonObject();
         String id2 = UUID.randomUUID().toString();
-        receivedTextMessage2.put("id", id2);
-        receivedTextMessage2.put("notify_number", "447700900111");
-        receivedTextMessage2.put("user_number", "447700900000");
-        receivedTextMessage2.put("service_id", serviceId);
-        receivedTextMessage2.put("content", "message 2");
-        receivedTextMessage2.put("receivedTextMessage", "Content of the second message");
-        receivedTextMessage2.put("created_at", "2016-03-01T08:35:00.000Z");
+        receivedTextMessage2.addProperty("id", id2);
+        receivedTextMessage2.addProperty("notify_number", "447700900111");
+        receivedTextMessage2.addProperty("user_number", "447700900000");
+        receivedTextMessage2.addProperty("service_id", serviceId);
+        receivedTextMessage2.addProperty("content", "message 2");
+        receivedTextMessage2.addProperty("receivedTextMessage", "Content of the second message");
+        receivedTextMessage2.addProperty("created_at", "2016-03-01T08:35:00.000Z");
 
-        JSONArray listReceivedTextMessages = new JSONArray();
+        JsonArray listReceivedTextMessages = new JsonArray();
         listReceivedTextMessages.add(receivedTextMessage);
         listReceivedTextMessages.add(receivedTextMessage2);
 
-        JSONObject content = new JSONObject();
-        content.put("received_text_messages", listReceivedTextMessages);
-        JSONObject links = new JSONObject();
-        links.put("current", "https://api.notifications.va.gov/received-text-messages");
-        links.put("next", null);
-        content.put("links", links);
+        JsonObject content = new JsonObject();
+        content.add("received_text_messages", listReceivedTextMessages);
+        JsonObject links = new JsonObject();
+        links.addProperty("current", "https://api.notifications.va.gov/received-text-messages");
+        links.add("next", null);
+        content.add("links", links);
 
         ReceivedTextMessageList result = gsonInstance.fromJson(content.toString(), ReceivedTextMessageList.class);
         assertEquals(2, result.getReceivedTextMessages().size());

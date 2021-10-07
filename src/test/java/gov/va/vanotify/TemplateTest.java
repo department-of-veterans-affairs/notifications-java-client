@@ -1,7 +1,7 @@
 package gov.va.vanotify;
 
+import com.google.gson.JsonObject;
 import org.joda.time.DateTime;
-import org.jose4j.json.internal.json_simple.JSONObject;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -16,25 +16,25 @@ public class TemplateTest {
 
     @Test
     public void testTemplate_canCreateObjectFromJson() {
-        JSONObject content = new JSONObject();
+        JsonObject content = new JsonObject();
         String id = UUID.randomUUID().toString();
-        content.put("id", id);
-        content.put("name", "my template");
-        content.put("type", "email");
-        content.put("created_at", "2017-05-01T08:30:00.000Z");
-        content.put("updated_at", "2017-05-01T08:34:00.000Z");
-        content.put("version", 3);
-        content.put("body", "The body of the template. For ((name)) eyes only.");
-        content.put("subject", "Private email");
+        content.addProperty("id", id);
+        content.addProperty("name", "my template");
+        content.addProperty("type", "email");
+        content.addProperty("created_at", "2017-05-01T08:30:00.000Z");
+        content.addProperty("updated_at", "2017-05-01T08:34:00.000Z");
+        content.addProperty("version", 3);
+        content.addProperty("body", "The body of the template. For ((name)) eyes only.");
+        content.addProperty("subject", "Private email");
 
-        JSONObject required = new JSONObject();
-        required.put("required", true);
+        JsonObject required = new JsonObject();
+        required.addProperty("required", true);
 
-        JSONObject personalisation = new JSONObject();
-        personalisation.put("placeholder", required);
-        personalisation.put("conditional", required);
+        JsonObject personalisation = new JsonObject();
+        personalisation.add("placeholder", required);
+        personalisation.add("conditional", required);
 
-        content.put("personalisation", personalisation);
+        content.add("personalisation", personalisation);
 
         Template template = gsonInstance.fromJson(content.toString(), Template.class);
         assertEquals(UUID.fromString(id), template.getId());
@@ -57,17 +57,17 @@ public class TemplateTest {
 
     @Test
     public void testTemplate_canCreateObjectFromJsonWithOptionals() {
-        JSONObject content = new JSONObject();
+        JsonObject content = new JsonObject();
         String id = UUID.randomUUID().toString();
-        content.put("id", id);
-        content.put("name", "my template");
-        content.put("type", "email");
-        content.put("created_at", "2017-05-01T08:30:00.000Z");
-        content.put("updated_at", null);
-        content.put("version", 3);
-        content.put("body", "The body of the template. For ((name)) eyes only.");
-        content.put("subject", null);
-        content.put("personalisation", null);
+        content.addProperty("id", id);
+        content.addProperty("name", "my template");
+        content.addProperty("type", "email");
+        content.addProperty("created_at", "2017-05-01T08:30:00.000Z");
+        content.add("updated_at", null);
+        content.addProperty("version", 3);
+        content.addProperty("body", "The body of the template. For ((name)) eyes only.");
+        content.add("subject", null);
+        content.add("personalisation", null);
 
         Template template = gsonInstance.fromJson(content.toString(), Template.class);
         assertEquals(UUID.fromString(id), template.getId());

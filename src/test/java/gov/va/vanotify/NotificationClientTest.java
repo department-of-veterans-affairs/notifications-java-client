@@ -1,8 +1,7 @@
 package gov.va.vanotify;
 
+import com.google.gson.JsonObject;
 import org.apache.commons.codec.binary.Base64;
-import org.json.JSONObject;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -100,23 +99,23 @@ public class NotificationClientTest {
     @Test
     public void testPrepareUpload() throws NotificationClientException {
         byte[] documentContent = "this is a document to test with".getBytes();
-        JSONObject response = NotificationClient.prepareUpload(documentContent);
-        JSONObject expectedResult = new JSONObject();
-        expectedResult.put("file", new String(Base64.encodeBase64(documentContent), ISO_8859_1));
-        expectedResult.put("is_csv", false);
-        assertEquals(expectedResult.getString("file"), response.getString("file"));
-        assertEquals(expectedResult.getBoolean("is_csv"), response.getBoolean("is_csv"));
+        JsonObject response = NotificationClient.prepareUpload(documentContent);
+        JsonObject expectedResult = new JsonObject();
+        expectedResult.addProperty("file", new String(Base64.encodeBase64(documentContent), ISO_8859_1));
+        expectedResult.addProperty("is_csv", false);
+        assertEquals(expectedResult.get("file").getAsString(), response.get("file").getAsString());
+        assertEquals(expectedResult.get("is_csv").getAsBoolean(), response.get("is_csv").getAsBoolean());
     }
 
     @Test
     public void testPrepareUploadForCSV() throws NotificationClientException {
         byte[] documentContent = "this is a document to test with".getBytes();
-        JSONObject response = NotificationClient.prepareUpload(documentContent, true);
-        JSONObject expectedResult = new JSONObject();
-        expectedResult.put("file", new String(Base64.encodeBase64(documentContent), ISO_8859_1));
-        expectedResult.put("is_csv", true);
-        assertEquals(expectedResult.getString("file"), response.getString("file"));
-        assertEquals(expectedResult.getBoolean("is_csv"), response.getBoolean("is_csv"));
+        JsonObject response = NotificationClient.prepareUpload(documentContent, true);
+        JsonObject expectedResult = new JsonObject();
+        expectedResult.addProperty("file", new String(Base64.encodeBase64(documentContent), ISO_8859_1));
+        expectedResult.addProperty("is_csv", true);
+        assertEquals(expectedResult.get("file").getAsString(), response.get("file").getAsString());
+        assertEquals(expectedResult.get("is_csv").getAsString(), response.get("is_csv").getAsString());
     }
 
     @Test

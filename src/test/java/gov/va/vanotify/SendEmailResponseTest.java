@@ -1,6 +1,6 @@
 package gov.va.vanotify;
 
-import org.json.JSONObject;
+import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -13,22 +13,22 @@ public class SendEmailResponseTest {
 
     @Test
     public void testNotificationResponseForEmailResponse(){
-        JSONObject postEmailResponse = new JSONObject();
+        JsonObject postEmailResponse = new JsonObject();
         UUID id = UUID.randomUUID();
-        postEmailResponse.put("id", id);
-        postEmailResponse.put("reference", "clientReference");
-        JSONObject template = new JSONObject();
+        postEmailResponse.addProperty("id", id.toString());
+        postEmailResponse.addProperty("reference", "clientReference");
+        JsonObject template = new JsonObject();
         UUID templateId = UUID.randomUUID();
-        template.put("id", templateId);
-        template.put("version", 1);
-        template.put("uri", "https://api.notifications.va.gov/templates/"+templateId);
-        postEmailResponse.put("template", template);
-        JSONObject content = new JSONObject();
-        content.put("body", "hello Fred");
-        content.put("from_email", "senderId");
-        content.put("subject", "Reminder for thing");
-        postEmailResponse.put("content", content);
-        postEmailResponse.put("billing_code", "custom code");
+        template.addProperty("id", templateId.toString());
+        template.addProperty("version", 1);
+        template.addProperty("uri", "https://api.notifications.va.gov/templates/"+templateId);
+        postEmailResponse.add("template", template);
+        JsonObject content = new JsonObject();
+        content.addProperty("body", "hello Fred");
+        content.addProperty("from_email", "senderId");
+        content.addProperty("subject", "Reminder for thing");
+        postEmailResponse.add("content", content);
+        postEmailResponse.addProperty("billing_code", "custom code");
 
 
         SendEmailResponse response = gsonInstance.fromJson(postEmailResponse.toString(), SendEmailResponse.class);

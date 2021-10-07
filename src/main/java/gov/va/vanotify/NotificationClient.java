@@ -1,5 +1,6 @@
 package gov.va.vanotify;
 
+import com.google.gson.JsonObject;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.io.FileUtils;
@@ -312,33 +313,33 @@ public class NotificationClient implements NotificationClientApi {
 
     /**
      * Use the prepareUpload method when uploading a document via sendEmail.
-     * The prepareUpload method creates a <code>JSONObject</code> which will need to be added to the personalisation map.
+     * The prepareUpload method creates a <code>JsonObject</code> which will need to be added to the personalisation map.
      *
      * @param documentContents byte[] of the document
      * @param isCsv boolean True if a CSV file, False if not to ensure document is downloaded as correct file type
-     * @return <code>JSONObject</code> a json object to be added to the personalisation is returned
+     * @return <code>JsonObject</code> a json object to be added to the personalisation is returned
      */
-    public static JSONObject prepareUpload(final byte[] documentContents, boolean isCsv) throws NotificationClientException {
+    public static JsonObject prepareUpload(final byte[] documentContents, boolean isCsv) throws NotificationClientException {
         if (documentContents.length > 2*1024*1024){
             throw new NotificationClientException(413, "File is larger than 2MB");
         }
         byte[] fileContentAsByte = Base64.encodeBase64(documentContents);
         String fileContent = new String(fileContentAsByte, ISO_8859_1);
 
-        JSONObject jsonFileObject = new JSONObject();
-        jsonFileObject.put("file", fileContent);
-        jsonFileObject.put("is_csv", isCsv);
+        JsonObject jsonFileObject = new JsonObject();
+        jsonFileObject.addProperty("file", fileContent);
+        jsonFileObject.addProperty("is_csv", isCsv);
         return jsonFileObject;
     }
 
     /**
      * Use the prepareUpload method when uploading a document via sendEmail.
-     * The prepareUpload method creates a <code>JSONObject</code> which will need to be added to the personalisation map.
+     * The prepareUpload method creates a <code>JsonObject</code> which will need to be added to the personalisation map.
      *
      * @param documentContents byte[] of the document
-     * @return <code>JSONObject</code> a json object to be added to the personalisation is returned
+     * @return <code>JsonObject</code> a json object to be added to the personalisation is returned
      */
-    public static JSONObject prepareUpload(final byte[] documentContents) throws NotificationClientException {
+    public static JsonObject prepareUpload(final byte[] documentContents) throws NotificationClientException {
         return prepareUpload(documentContents, false);
     }
 

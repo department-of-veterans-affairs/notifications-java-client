@@ -1,6 +1,6 @@
 package gov.va.vanotify;
 
-import org.json.JSONObject;
+import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -14,20 +14,20 @@ public class SendLetterResponseTest {
 
     @Test
     public void testNotificationResponseForLetterResponse(){
-        JSONObject postLetterResponse = new JSONObject();
+        JsonObject postLetterResponse = new JsonObject();
         UUID id = UUID.randomUUID();
-        postLetterResponse.put("id", id);
-        postLetterResponse.put("reference", "clientReference");
-        JSONObject template = new JSONObject();
+        postLetterResponse.addProperty("id", id.toString());
+        postLetterResponse.addProperty("reference", "clientReference");
+        JsonObject template = new JsonObject();
         UUID templateId = UUID.randomUUID();
-        template.put("id", templateId);
-        template.put("version", 1);
-        template.put("uri", "https://api.notifications.va.gov/templates/"+templateId);
-        postLetterResponse.put("template", template);
-        JSONObject content = new JSONObject();
-        content.put("body", "hello Fred");
-        content.put("subject", "Reminder for thing");
-        postLetterResponse.put("content", content);
+        template.addProperty("id", templateId.toString());
+        template.addProperty("version", 1);
+        template.addProperty("uri", "https://api.notifications.va.gov/templates/"+templateId);
+        postLetterResponse.add("template", template);
+        JsonObject content = new JsonObject();
+        content.addProperty("body", "hello Fred");
+        content.addProperty("subject", "Reminder for thing");
+        postLetterResponse.add("content", content);
 
 
         SendLetterResponse response = gsonInstance.fromJson(postLetterResponse.toString(), SendLetterResponse.class);

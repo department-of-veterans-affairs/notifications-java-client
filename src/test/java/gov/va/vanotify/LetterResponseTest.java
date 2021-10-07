@@ -1,6 +1,7 @@
 package gov.va.vanotify;
 
-import org.json.JSONObject;
+
+import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -13,10 +14,10 @@ public class LetterResponseTest {
 
     @Test
     public void testNotificationResponseForLetterResponse(){
-        JSONObject postLetterResponse = new JSONObject();
+        JsonObject postLetterResponse = new JsonObject();
         UUID id = UUID.randomUUID();
-        postLetterResponse.put("id", id);
-        postLetterResponse.put("reference", "clientReference");
+        postLetterResponse.addProperty("id", id.toString());
+        postLetterResponse.addProperty("reference", "clientReference");
 
         LetterResponse response = gsonInstance.fromJson(postLetterResponse.toString(), LetterResponse.class);
         assertEquals(id, response.getNotificationId());
