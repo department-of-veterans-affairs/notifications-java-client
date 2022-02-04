@@ -1,3 +1,12 @@
+## 2.0.0
+* Added GSON library as dependency 
+* Refactored all JSON serialization and deserialization to use GSON
+
+### Breaking changes
+* Removed deprecated `sendEmail` and `sendSms` methods.
+
+  You have to use `new EmailRequest.Builder()` and `new SmsRequest.Builder()` to fluently construct your requests starting with version 2.
+
 ## 1.2.0
 * Added support for sending notification requests with recipient identifiers supported by Master Person Index.
 Identifiers will be used to lookup contact information (email, phone number) as well as contact preferences in VA Profile.

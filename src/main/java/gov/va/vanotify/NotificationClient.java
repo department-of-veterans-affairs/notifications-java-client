@@ -1,20 +1,16 @@
 package gov.va.vanotify;
 
+import com.google.gson.JsonObject;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
-import org.json.JSONObject;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URISyntaxException;
@@ -25,6 +21,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static gov.va.vanotify.GsonConfiguration.gsonInstance;
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -135,91 +132,28 @@ public class NotificationClient implements NotificationClientApi {
 
     public SendEmailResponse sendEmail(EmailRequest emailRequest) throws NotificationClientException {
         HttpURLConnection conn = createConnectionAndSetHeaders(baseUrl + "/v2/notifications/email", "POST");
-        String response = performPostRequest(conn, emailRequest.asJson(), HttpsURLConnection.HTTP_CREATED);
-        return new SendEmailResponse(response);
-    }
-
-    public SendEmailResponse sendEmail(String templateId,
-                                       String emailAddress,
-                                       Map<String, ?> personalisation,
-                                       String reference,
-                                       String billingCode) throws NotificationClientException {
-        return sendEmail(templateId, emailAddress, personalisation, reference, billingCode, "");
-    }
-
-    @Override
-    public SendEmailResponse sendEmail(String templateId,
-                                       String emailAddress,
-                                       Map<String, ?> personalisation,
-                                       String reference,
-                                       String billingCode,
-                                       String emailReplyToId) throws NotificationClientException {
-
-        JSONObject body = createBodyForPostRequest(templateId,
-                null,
-                emailAddress,
-                personalisation,
-                reference,
-                billingCode,
-                null,
-                null);
-
-        if(emailReplyToId != null && !emailReplyToId.isEmpty())
-        {
-            body.put("email_reply_to_id", emailReplyToId);
-        }
-
-        HttpURLConnection conn = createConnectionAndSetHeaders(baseUrl + "/v2/notifications/email", "POST");
-        String response = performPostRequest(conn, body, HttpsURLConnection.HTTP_CREATED);
-        return new SendEmailResponse(response);
+        String response = performPostRequest(conn, gsonInstance.toJson(emailRequest), HttpsURLConnection.HTTP_CREATED);
+        return gsonInstance.fromJson(response, SendEmailResponse.class);
     }
 
     public SendSmsResponse sendSms(SmsRequest smsRequest) throws NotificationClientException {
         HttpURLConnection conn = createConnectionAndSetHeaders(baseUrl + "/v2/notifications/sms", "POST");
-        String response = performPostRequest(conn, smsRequest.asJson(), HttpsURLConnection.HTTP_CREATED);
-        return new SendSmsResponse(response);
-    }
-
-    public SendSmsResponse sendSms(String templateId, String phoneNumber, Map<String, ?> personalisation, String reference, String billingCode) throws NotificationClientException {
-        return sendSms(templateId, phoneNumber, personalisation, reference, billingCode, "");
-    }
-
-    public SendSmsResponse sendSms(String templateId,
-                                   String phoneNumber,
-                                   Map<String, ?> personalisation,
-                                   String reference,
-                                   String billingCode,
-                                   String smsSenderId) throws NotificationClientException {
-
-        JSONObject body = createBodyForPostRequest(templateId,
-                phoneNumber,
-                null,
-                personalisation,
-                reference,
-                billingCode,
-                null,
-                null);
-
-        if( smsSenderId != null && !smsSenderId.isEmpty()){
-            body.put(" ", smsSenderId);
-        }
-        HttpURLConnection conn = createConnectionAndSetHeaders(baseUrl + "/v2/notifications/sms", "POST");
-        String response = performPostRequest(conn, body, HttpsURLConnection.HTTP_CREATED);
-        return new SendSmsResponse(response);
+        String response = performPostRequest(conn, gsonInstance.toJson(smsRequest), HttpsURLConnection.HTTP_CREATED);
+        return gsonInstance.fromJson(response, SendSmsResponse.class);
     }
 
     public SendLetterResponse sendLetter(String templateId, Map<String, ?> personalisation, String reference) throws NotificationClientException {
-        JSONObject body = createBodyForPostRequest(templateId, null, null, personalisation, reference, null, null, null);
+        JsonObject body = createBodyForPostRequest(templateId, null, null, personalisation, reference, null, null, null);
         HttpURLConnection conn = createConnectionAndSetHeaders(baseUrl + "/v2/notifications/letter", "POST");
-        String response = performPostRequest(conn, body, HttpsURLConnection.HTTP_CREATED);
-        return new SendLetterResponse(response);
+        String response = performPostRequest(conn, body.toString(), HttpsURLConnection.HTTP_CREATED);
+        return gsonInstance.fromJson(response, SendLetterResponse.class);
     }
 
     public Notification getNotificationById(String notificationId) throws NotificationClientException {
         String url = baseUrl + "/v2/notifications/" + notificationId;
         HttpURLConnection conn = createConnectionAndSetHeaders(url, "GET");
         String response = performGetRequest(conn);
-        return new Notification(response);
+        return gsonInstance.fromJson(response, Notification.class);
 
     }
 
@@ -248,7 +182,7 @@ public class NotificationClient implements NotificationClientApi {
 
             HttpURLConnection conn = createConnectionAndSetHeaders(builder.toString(), "GET");
             String response = performGetRequest(conn);
-            return new NotificationList(response);
+            return gsonInstance.fromJson(response, NotificationList.class);
         } catch (URISyntaxException e) {
             LOGGER.log(Level.SEVERE, e.toString(), e);
             throw new NotificationClientException(e);
@@ -259,14 +193,14 @@ public class NotificationClient implements NotificationClientApi {
         String url = baseUrl + "/v2/template/" + templateId;
         HttpURLConnection conn = createConnectionAndSetHeaders(url, "GET");
         String response = performGetRequest(conn);
-        return new Template(response);
+        return gsonInstance.fromJson(response, Template.class);
     }
 
     public Template getTemplateVersion(String templateId, int version) throws NotificationClientException{
         String url = baseUrl + "/v2/template/" + templateId + "/version/" + version;
         HttpURLConnection conn = createConnectionAndSetHeaders(url, "GET");
         String response = performGetRequest(conn);
-        return new Template(response);
+        return gsonInstance.fromJson(response, Template.class);
     }
 
     public TemplateList getAllTemplates(String templateType) throws NotificationClientException{
@@ -277,7 +211,7 @@ public class NotificationClient implements NotificationClientApi {
             }
             HttpURLConnection conn = createConnectionAndSetHeaders(builder.toString(), "GET");
             String response = performGetRequest(conn);
-            return new TemplateList(response);
+            return gsonInstance.fromJson(response, TemplateList.class);
         } catch (URISyntaxException e) {
             LOGGER.log(Level.SEVERE, e.toString(), e);
             throw new NotificationClientException(e);
@@ -285,13 +219,13 @@ public class NotificationClient implements NotificationClientApi {
     }
 
     public TemplatePreview generateTemplatePreview(String templateId, Map<String, Object> personalisation) throws NotificationClientException {
-        JSONObject body = new JSONObject();
+        JsonObject body = new JsonObject();
         if (personalisation != null && !personalisation.isEmpty()) {
-            body.put("personalisation", new JSONObject(personalisation));
+            body.add("personalisation",gsonInstance.toJsonTree(personalisation));
         }
         HttpURLConnection conn = createConnectionAndSetHeaders(baseUrl + "/v2/template/" + templateId + "/preview", "POST");
-        String response = performPostRequest(conn, body, HttpsURLConnection.HTTP_OK);
-        return new TemplatePreview(response);
+        String response = performPostRequest(conn, body.toString(), HttpsURLConnection.HTTP_OK);
+        return gsonInstance.fromJson(response, TemplatePreview.class);
     }
 
     public ReceivedTextMessageList getReceivedTextMessages(String olderThanId) throws NotificationClientException {
@@ -302,7 +236,7 @@ public class NotificationClient implements NotificationClientApi {
             }
             HttpURLConnection conn = createConnectionAndSetHeaders(builder.toString(), "GET");
             String response = performGetRequest(conn);
-            return new ReceivedTextMessageList(response);
+            return gsonInstance.fromJson(response, ReceivedTextMessageList.class);
         } catch (URISyntaxException e){
             LOGGER.log(Level.SEVERE, e.toString(), e);
             throw new NotificationClientException(e);
@@ -311,40 +245,40 @@ public class NotificationClient implements NotificationClientApi {
 
     /**
      * Use the prepareUpload method when uploading a document via sendEmail.
-     * The prepareUpload method creates a <code>JSONObject</code> which will need to be added to the personalisation map.
+     * The prepareUpload method creates a <code>JsonObject</code> which will need to be added to the personalisation map.
      *
      * @param documentContents byte[] of the document
      * @param isCsv boolean True if a CSV file, False if not to ensure document is downloaded as correct file type
-     * @return <code>JSONObject</code> a json object to be added to the personalisation is returned
+     * @return <code>JsonObject</code> a json object to be added to the personalisation is returned
      */
-    public static JSONObject prepareUpload(final byte[] documentContents, boolean isCsv) throws NotificationClientException {
+    public static JsonObject prepareUpload(final byte[] documentContents, boolean isCsv) throws NotificationClientException {
         if (documentContents.length > 2*1024*1024){
             throw new NotificationClientException(413, "File is larger than 2MB");
         }
         byte[] fileContentAsByte = Base64.encodeBase64(documentContents);
         String fileContent = new String(fileContentAsByte, ISO_8859_1);
 
-        JSONObject jsonFileObject = new JSONObject();
-        jsonFileObject.put("file", fileContent);
-        jsonFileObject.put("is_csv", isCsv);
+        JsonObject jsonFileObject = new JsonObject();
+        jsonFileObject.addProperty("file", fileContent);
+        jsonFileObject.addProperty("is_csv", isCsv);
         return jsonFileObject;
     }
 
     /**
      * Use the prepareUpload method when uploading a document via sendEmail.
-     * The prepareUpload method creates a <code>JSONObject</code> which will need to be added to the personalisation map.
+     * The prepareUpload method creates a <code>JsonObject</code> which will need to be added to the personalisation map.
      *
      * @param documentContents byte[] of the document
-     * @return <code>JSONObject</code> a json object to be added to the personalisation is returned
+     * @return <code>JsonObject</code> a json object to be added to the personalisation is returned
      */
-    public static JSONObject prepareUpload(final byte[] documentContents) throws NotificationClientException {
+    public static JsonObject prepareUpload(final byte[] documentContents) throws NotificationClientException {
         return prepareUpload(documentContents, false);
     }
 
-    private String performPostRequest(HttpURLConnection conn, JSONObject body, int expectedStatusCode) throws NotificationClientException {
+    private String performPostRequest(HttpURLConnection conn, String body, int expectedStatusCode) throws NotificationClientException {
         try{
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream(), UTF_8);
-            wr.write(body.toString());
+            wr.write(body);
             wr.flush();
 
             int httpResult = conn.getResponseCode();
@@ -438,7 +372,7 @@ public class NotificationClient implements NotificationClientApi {
         return conn;
     }
 
-    private JSONObject createBodyForPostRequest(final String templateId,
+    private JsonObject createBodyForPostRequest(final String templateId,
                                                 final String phoneNumber,
                                                 final String emailAddress,
                                                 final Map<String, ?> personalisation,
@@ -446,37 +380,37 @@ public class NotificationClient implements NotificationClientApi {
                                                 final String billingCode,
                                                 final String encodedFileData,
                                                 final String postage) {
-        JSONObject body = new JSONObject();
+        JsonObject body = new JsonObject();
 
         if(phoneNumber != null && !phoneNumber.isEmpty()) {
-            body.put("phone_number", phoneNumber);
+            body.addProperty("phone_number", phoneNumber);
         }
 
         if(emailAddress != null && !emailAddress.isEmpty()) {
-            body.put("email_address", emailAddress);
+            body.addProperty("email_address", emailAddress);
         }
 
         if(templateId != null && !templateId.isEmpty()) {
-            body.put("template_id", templateId);
+            body.addProperty("template_id", templateId);
         }
 
         if (personalisation != null && !personalisation.isEmpty()) {
-            body.put("personalisation", personalisation);
+            body.add("personalisation", gsonInstance.toJsonTree(personalisation));
         }
 
         if(reference != null && !reference.isEmpty()){
-            body.put("reference", reference);
+            body.addProperty("reference", reference);
         }
 
         if(billingCode != null && !billingCode.isEmpty()){
-            body.put("billing_code", billingCode);
+            body.addProperty("billing_code", billingCode);
         }
 
         if(encodedFileData != null && !encodedFileData.isEmpty()) {
-            body.put("content", encodedFileData);
+            body.addProperty("content", encodedFileData);
         }
         if(postage != null && !postage.isEmpty()){
-            body.put("postage", postage);
+            body.addProperty("postage", postage);
         }
         return body;
     }
@@ -561,7 +495,7 @@ public class NotificationClient implements NotificationClientApi {
             throw new NotificationClientException("base64EncodedPDFFile is not a PDF");
         }
 
-        JSONObject body = createBodyForPostRequest(null,
+        JsonObject body = createBodyForPostRequest(null,
                 null,
                 null,
                 null,
@@ -575,8 +509,8 @@ public class NotificationClient implements NotificationClientApi {
                 "POST"
         );
 
-        String response = performPostRequest(conn, body, HttpsURLConnection.HTTP_CREATED);
-        return new LetterResponse(response);
+        String response = performPostRequest(conn, body.toString(), HttpsURLConnection.HTTP_CREATED);
+        return gsonInstance.fromJson(response, LetterResponse.class);
 
     }
 

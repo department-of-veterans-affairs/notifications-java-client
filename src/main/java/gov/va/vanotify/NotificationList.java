@@ -1,42 +1,27 @@
 package gov.va.vanotify;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.json.JSONObject;
-import org.json.JSONArray;
-
 public class NotificationList {
     private final List<Notification> notifications;
-    private final String currentPageLink;
-    private final String nextPageLink;
+    private final Links links;
+
+    public NotificationList(List<Notification> notifications, Links links) {
+        this.notifications = notifications;
+        this.links = links;
+    }
 
     public List<Notification> getNotifications() {
         return notifications;
     }
 
     public Optional<String> getNextPageLink() {
-        return Optional.ofNullable(nextPageLink);
+        return links.getNext();
     }
 
     public String getCurrentPageLink() {
-        return currentPageLink;
-    }
-
-
-    public NotificationList(String content){
-        JSONObject data = new JSONObject(content);
-        JSONObject links = data.getJSONObject("links");
-        currentPageLink = links.getString("current");
-        nextPageLink = links.isNull("next") ? null : links.getString("next");
-        notifications =  new ArrayList<>();
-
-        JSONArray notificationsData = data.getJSONArray("notifications");
-        for(int i = 0; i < notificationsData.length(); i++){
-            JSONObject notification = notificationsData.getJSONObject(i);
-            notifications.add(new Notification(notification));
-        }
+        return links.getCurrent();
     }
 
     @Override
@@ -47,8 +32,9 @@ public class NotificationList {
         }
         return "NotificationList{" +
                 "notifications=" + notifications_string.toString() +
-                ", currentPageLink='" + currentPageLink + '\'' +
-                ", nextPageLink='" + nextPageLink + '\'' +
+                ", currentPageLink='" + getCurrentPageLink() + '\'' +
+                ", nextPageLink='" + getNextPageLink() + '\'' +
                 '}';
     }
+
 }

@@ -1,45 +1,35 @@
 package gov.va.vanotify;
 
-import org.json.JSONObject;
-
 import java.util.UUID;
 
 public class SendLetterResponse extends LetterResponse {
-    private final UUID templateId;
-    private final int templateVersion;
-    private final String templateUri;
-    private final String body;
-    private final String subject;
+    private final TemplateDTO template;
+    private final Content content;
 
-    public SendLetterResponse(String response) {
-        super(response);
-        JSONObject content = getData().getJSONObject("content");
-        body = tryToGetString(content, "body");
-        subject = tryToGetString(content, "subject");
-        JSONObject template = getData().getJSONObject("template");
-        templateId = UUID.fromString(template.getString("id"));
-        templateVersion = template.getInt("version");
-        templateUri = template.getString("uri");
+    public SendLetterResponse(UUID notificationId, String reference, String postage, TemplateDTO template, Content content) {
+        super(notificationId, reference, postage);
+        this.template = template;
+        this.content = content;
     }
 
     public UUID getTemplateId() {
-        return templateId;
+        return template.getId();
     }
 
     public int getTemplateVersion() {
-        return templateVersion;
+        return template.getVersion();
     }
 
     public String getTemplateUri() {
-        return templateUri;
+        return template.getUri();
     }
 
     public String getBody() {
-        return body;
+        return content.getBody();
     }
 
     public String getSubject() {
-        return subject;
+        return content.getSubject();
     }
 
     @Override
@@ -47,11 +37,29 @@ public class SendLetterResponse extends LetterResponse {
         return "SendLetterResponse{" +
                 "notificationId=" + getNotificationId() +
                 ", reference=" + getReference() +
-                ", templateId=" + templateId +
-                ", templateVersion=" + templateVersion +
-                ", templateUri='" + templateUri + '\'' +
-                ", body='" + body + '\'' +
-                ", subject='" + subject +
+                ", templateId=" + getTemplateId() +
+                ", templateVersion=" + getTemplateVersion() +
+                ", templateUri='" + getTemplateUri() + '\'' +
+                ", body='" + getBody() + '\'' +
+                ", subject='" + getSubject() +
                 '}';
+    }
+
+    private class Content {
+        private final String body;
+        private final String subject;
+
+        public Content(String body, String subject) {
+            this.body = body;
+            this.subject = subject;
+        }
+
+        public String getBody() {
+            return body;
+        }
+
+        public String getSubject() {
+            return subject;
+        }
     }
 }

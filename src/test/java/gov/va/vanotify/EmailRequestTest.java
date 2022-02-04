@@ -1,7 +1,6 @@
 package gov.va.vanotify;
 
-import org.json.JSONObject;
-
+import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -10,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static gov.va.vanotify.GsonConfiguration.gsonInstance;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -89,14 +89,14 @@ public class EmailRequestTest {
                 .withRecipientIdentifier(identifier)
                 .build();
 
-        JSONObject actual = request.asJson();
-        assertEquals(templateId, actual.getString("template_id"));
-        assertEquals(emailAddress, actual.getString("email_address"));
-        assertEquals(emailReplyToId, actual.getString("email_reply_to_id"));
-        assertEquals(reference, actual.getString("reference"));
-        assertEquals(billingCode, actual.getString("billing_code"));
-        assertEquals("bar", actual.getJSONObject("personalisation").getString("foo"));
-        assertEquals("ICN", actual.getJSONObject("recipient_identifier").getString("id_type"));
-        assertEquals(identifier.getValue(), actual.getJSONObject("recipient_identifier").getString("id_value"));
+        JsonObject actual = gsonInstance.toJsonTree(request).getAsJsonObject();
+        assertEquals(templateId, actual.get("template_id").getAsString());
+        assertEquals(emailAddress, actual.get("email_address").getAsString());
+        assertEquals(emailReplyToId, actual.get("email_reply_to_id").getAsString());
+        assertEquals(reference, actual.get("reference").getAsString());
+        assertEquals(billingCode, actual.get("billing_code").getAsString());
+        assertEquals("bar", actual.getAsJsonObject("personalisation").get("foo").getAsString());
+        assertEquals("ICN", actual.getAsJsonObject("recipient_identifier").get("id_type").getAsString());
+        assertEquals(identifier.getValue(), actual.getAsJsonObject("recipient_identifier").get("id_value").getAsString());
     }
 }

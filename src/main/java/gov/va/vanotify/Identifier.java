@@ -1,13 +1,19 @@
 package gov.va.vanotify;
 
-import org.json.JSONObject;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.annotations.SerializedName;
 
+import java.lang.reflect.Type;
 import java.util.Objects;
 
 public class Identifier {
+    @SerializedName("id_type")
     private final IdentifierType identifierType;
+    @SerializedName("id_value")
     private final String value;
-
 
     public Identifier(IdentifierType identifierType, String value) {
         if (value == null || value.isEmpty()) throw new IllegalStateException("Identifier value cannot be empty");
@@ -19,26 +25,12 @@ public class Identifier {
         else { this.value = value + identifierType.suffix(); }
     }
 
-    public static Identifier fromJson(JSONObject json) {
-        return new Identifier(
-                IdentifierType.valueOf(json.getString("id_type")),
-                json.getString("id_value")
-        );
-    }
-
     public IdentifierType getIdentifierType() {
         return identifierType;
     }
 
     public String getValue() {
         return value;
-    }
-
-    public JSONObject asJson() {
-        JSONObject body = new JSONObject();
-        body.put("id_type", this.identifierType.toString());
-        body.put("id_value", this.value);
-        return body;
     }
 
     @Override
@@ -60,5 +52,16 @@ public class Identifier {
                 "identifierType=" + identifierType +
                 ", value=" + value +
                 '}';
+    }
+
+    public static class IdentifierDeserializer implements JsonDeserializer<Identifier> {
+
+        @Override
+        public Identifier deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+            return new Identifier(
+                    IdentifierType.valueOf(jsonElement.getAsJsonObject().get("id_type").getAsString()),
+                    jsonElement.getAsJsonObject().get("id_value").getAsString()
+            );
+        }
     }
 }

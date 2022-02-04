@@ -11,122 +11,24 @@ public interface NotificationClientApi {
      * The sendEmail method will create an HTTPS POST request. A JWT token will be created and added as an Authorization header to the request.
      *
      * @param emailRequest  Email request built using fluent builder API.
+     * {@link EmailRequest.Builder}
      *
      * @return <code>SendEmailResponse</code>
      * @throws NotificationClientException see https://docs.notifications.service.gov.uk/java.html#send-an-email-error-codes
      */
     SendEmailResponse sendEmail(EmailRequest emailRequest) throws NotificationClientException;
 
-
-    /**
-     * The sendEmail method will create an HTTPS POST request. A JWT token will be created and added as an Authorization header to the request.
-     *
-     * @deprecated
-     * <p> Use {@link NotificationClientApi#sendEmail(EmailRequest)} instead that offers fluent builder API.
-     * This method will not support new functionality (VA Identifiers) and will be removed in future versions.
-     *
-     * @param templateId      The template id is visible on the template page in the application.
-     * @param emailAddress    The email address
-     * @param personalisation Map representing the placeholders for the template if any. For example, key=name value=Bob
-     *                        Can be an empty map or null when the template does not require placeholders.
-     * @param reference       A reference specified by the service for the notification. Get all notifications can be filtered by this reference.
-     *                        This reference can be unique or used used to refer to a batch of notifications.
-     *                        Can be an empty string or null, when you do not require a reference for the notifications.
-     * @param billingCode     A billing code specified by the service for the notification.
-     *                        Used to group notifications for billing and reporting.
-     *                        Can be an empty string or null, when you do not require a billingCode for the notifications.
-     * @return <code>SendEmailResponse</code>
-     * @throws NotificationClientException see https://docs.notifications.service.gov.uk/java.html#send-an-email-error-codes
-     */
-    @Deprecated
-    SendEmailResponse sendEmail(String templateId, String emailAddress, Map<String, ?> personalisation, String reference, String billingCode) throws NotificationClientException;
-
-
-    /**
-     * The sendEmail method will create an HTTPS POST request. A JWT token will be created and added as an Authorization header to the request.
-     *
-     * @deprecated
-     * <p> Use {@link NotificationClientApi#sendEmail(EmailRequest)} instead that offers fluent builder API.
-     * This method will not support new functionality (VA Identifiers) and will be removed in future versions.
-     *
-     * @param templateId      The template id is visible on the template page in the application.
-     * @param emailAddress    The email address
-     * @param personalisation Map representing the placeholders for the template if any. For example, key=name value=Bob
-     *                        Can be an empty map or null when the template does not require placeholders.
-     * @param reference       A reference specified by the service for the notification. Get all notifications can be filtered by this reference.
-     *                        This reference can be unique or used used to refer to a batch of notifications.
-     *                        Can be an empty string or null, when you do not require a reference for the notifications.
-     * @param billingCode     A billing code specified by the service for the notification.
-     *                        Used to group notifications for billing and reporting.
-     *                        Can be an empty string or null, when you do not require a billingCode for the notifications.
-     * @param emailReplyToId  An optional identifier for a reply to email address for the notification, rather than use the service default.
-     *                        Service emailReplyToIds can be accessed via the service settings / manage email reply to addresses page.
-     *                        Omit this argument to use the default service email reply to address.
-     * @return <code>SendEmailResponse</code>
-     * @throws NotificationClientException see https://docs.notifications.service.gov.uk/java.html#send-an-email-error-codes
-     */
-    @Deprecated
-    SendEmailResponse sendEmail(String templateId, String emailAddress, Map<String, ?> personalisation, String reference, String billingCode, String emailReplyToId) throws NotificationClientException;
-
-
     /**
      * The sendSms method will create an HTTPS POST request. A JWT token will be created and added as an Authorization header to the request.
      *
      * @param smsRequest  SMS request built using fluent builder API.
+     * {@link SmsRequest.Builder}
      *
      * @return <code>SendEmailResponse</code>
      * @throws NotificationClientException see https://docs.notifications.service.gov.uk/java.html#send-an-email-error-codes
      */
     SendSmsResponse sendSms(SmsRequest smsRequest) throws NotificationClientException;
 
-    /**
-     * The sendSms method will create an HTTPS POST request. A JWT token will be created and added as an Authorization header to the request.
-     *
-     * @deprecated
-     * <p> Use {@link NotificationClientApi#sendSms(SmsRequest)} instead that offers fluent builder API.
-     * This method will not support new functionality (VA Identifiers) and will be removed in future versions.
-     *
-     * @param templateId      The template id is visible from the template page in the application.
-     * @param phoneNumber     The mobile phone number
-     * @param personalisation Map representing the placeholders for the template if any. For example, key=name value=Bob
-     *                        Can be an empty map or null when the template does not require placeholders.
-     * @param reference       A reference specified by the service for the notification. Get all notifications can be filtered by this reference.
-     *                        This reference can be unique or used used to refer to a batch of notifications.
-     *                        Can be an empty string or null, when you do not require a reference for the notifications.
-     * @param billingCode     A billing code specified by the service for the notification.
-     *                        Used to group notifications for billing and reporting.
-     *                        Can be an empty string or null, when you do not require a billingCode for the notifications.
-     * @return <code>SendSmsResponse</code>
-     * @throws NotificationClientException see https://docs.notifications.service.gov.uk/java.html#error-codes
-     */
-    @Deprecated
-    SendSmsResponse sendSms(String templateId, String phoneNumber, Map<String, ?> personalisation, String reference, String billingCode) throws NotificationClientException;
-
-    /**
-     * The sendSms method will create an HTTPS POST request. A JWT token will be created and added as an Authorization header to the request.
-     *
-     * @deprecated
-     * <p> Use {@link NotificationClientApi#sendSms(SmsRequest)} instead that offers fluent builder API.
-     * This method will not support new functionality (VA Identifiers) and will be removed in future versions.
-     *
-     * @param templateId      The template id is visible from the template page in the application.
-     * @param phoneNumber     The mobile phone number
-     * @param personalisation Map representing the placeholders for the template if any. For example, key=name value=Bob
-     *                        Can be an empty map or null when the template does not require placeholders.
-     * @param reference       A reference specified by the service for the notification. Get all notifications can be filtered by this reference.
-     *                        This reference can be unique or used used to refer to a batch of notifications.
-     *                        Can be an empty string or null, when you do not require a reference for the notifications.
-     * @param billingCode     A billing code specified by the service for the notification.
-     *                        Used to group notifications for billing and reporting.
-     *                        Can be an empty string or null, when you do not require a billingCode for the notifications.
-     * @param smsSenderId     An optional identifier for the text message sender of the notification, rather than use the service default.
-     *                        Service smsSenderIds can be accessed via the service settings / manage text message senders page.
-     *                        Omit this argument to use the default service text message sender.
-     * @return <code>SendSmsResponse</code>
-     * @throws NotificationClientException see https://docs.notifications.service.gov.uk/java.html#error-codes
-     */
-    @Deprecated
-    SendSmsResponse sendSms(String templateId, String phoneNumber, Map<String, ?> personalisation, String reference, String billingCode, String smsSenderId) throws NotificationClientException;
 
     /**
      * The sendLetter method will create an HTTPS POST request. A JWT token will be created and added as an Authorization header to the request.

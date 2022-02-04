@@ -1,7 +1,5 @@
 package gov.va.vanotify;
 
-import org.json.JSONObject;
-
 /**
  * Represents email notification request
  * To create an instance use the static builder with fluent API
@@ -10,36 +8,26 @@ import org.json.JSONObject;
  */
 public class EmailRequest extends NotificationRequest {
     private final String emailReplyToId;
+    private final String emailAddress;
 
     private EmailRequest(Builder builder) {
         super(builder);
         this.emailReplyToId = builder.emailReplyToId;
+        this.emailAddress = builder.recipient;
         if (this.missingRecipient() && this.recipientIdentifier == null) throw new IllegalStateException("Missing at least one of emailAddress and recipientIdentifier");
     }
 
+    private boolean missingRecipient() {
+        return this.emailAddress == null || this.emailAddress.isEmpty();
+    }
+
     public String getEmailAddress() {
-        return this.recipient;
+        return this.emailAddress;
     }
 
     public String getEmailReplyToId() {
         return emailReplyToId;
     }
-
-    @Override
-    public JSONObject asJson() {
-        JSONObject body = super.asJson();
-
-        if(recipient != null && !recipient.isEmpty()) {
-            body.put("email_address", recipient);
-        }
-
-        if(emailReplyToId != null && !emailReplyToId.isEmpty())
-        {
-            body.put("email_reply_to_id", emailReplyToId);
-        }
-        return body;
-    }
-
 
     /**
      * Fluent API Builder for EmailRequest

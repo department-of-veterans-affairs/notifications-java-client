@@ -1,12 +1,11 @@
 package gov.va.vanotify;
 
+import com.google.gson.JsonObject;
 import org.apache.commons.io.FileUtils;
-import org.json.JSONObject;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -153,7 +152,7 @@ public class ClientIntegrationTestIT {
         File file = new File(classLoader.getResource("one_page_pdf.pdf").getFile());
         byte [] fileContents = FileUtils.readFileToByteArray(file);
 
-        JSONObject documentFileObject = NotificationClient.prepareUpload(fileContents);
+        JsonObject documentFileObject = NotificationClient.prepareUpload(fileContents);
         personalisation.put("name", documentFileObject);
 
         String reference = UUID.randomUUID().toString();

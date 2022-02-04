@@ -1,15 +1,16 @@
 package gov.va.vanotify;
 
+import com.google.gson.annotations.SerializedName;
 import org.joda.time.DateTime;
-import org.json.JSONObject;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.Map;
 
 public class Template {
     private UUID id;
     private String name;
+    @SerializedName("type")
     private String templateType;
     private DateTime createdAt;
     private DateTime updatedAt;
@@ -19,32 +20,6 @@ public class Template {
     private String subject;
     private Map<String, Object> personalisation;
     private String letterContactBlock;
-
-
-    public Template(String content){
-        JSONObject responseBodyAsJson = new JSONObject(content);
-        build(responseBodyAsJson);
-
-    }
-
-    public Template(org.json.JSONObject data){
-        build(data);
-
-    }
-
-    private void build(JSONObject data) {
-        id = UUID.fromString(data.getString("id"));
-        name = data.getString("name");
-        templateType = data.getString("type");
-        createdAt = new DateTime(data.getString("created_at"));
-        updatedAt = data.isNull("updated_at") ? null : new DateTime(data.getString("updated_at"));
-        version = data.getInt("version");
-        body = data.getString("body");
-        subject = data.isNull("subject") ? null : data.getString("subject");
-        letterContactBlock = data.isNull("letter_contact_block") ? null : data.getString("letter_contact_block");
-        personalisation = data.isNull("personalisation") ? null :
-                JsonUtils.jsonToMap(data.getJSONObject("personalisation"));
-    }
 
     public UUID getId() {
         return id;
