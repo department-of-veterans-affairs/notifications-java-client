@@ -34,7 +34,9 @@ public class Notification {
     private String body;
     private String subject;
     private DateTime createdAt;
+    private String scheduledFor;
     private DateTime sentAt;
+    public String sentBy;
     private DateTime completedAt;
     private DateTime estimatedDelivery;
     private String createdByName;
@@ -124,8 +126,16 @@ public class Notification {
         return createdAt;
     }
 
+    public Optional<String> getScheduledFor() {
+        return Optional.ofNullable(scheduledFor);
+    }
+
     public Optional<DateTime> getSentAt() {
         return Optional.ofNullable(sentAt);
+    }
+
+    public Optional<String> getSentBy() {
+        return Optional.ofNullable(sentBy);
     }
 
     public Optional<DateTime> getCompletedAt() {
