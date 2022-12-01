@@ -36,7 +36,7 @@ public class Notification {
     private DateTime createdAt;
     private String scheduledFor;
     private DateTime sentAt;
-    public String sentBy;
+    private String sentBy;
     private DateTime completedAt;
     private DateTime estimatedDelivery;
     private String createdByName;
@@ -180,7 +180,9 @@ public class Notification {
                 ", body='" + body + '\'' +
                 ", subject='" + subject + '\'' +
                 ", createdAt=" + createdAt +
+                ", scheduled_for=" + scheduledFor +
                 ", sentAt=" + sentAt +
+                ", sentBy=" + sentBy +
                 ", completedAt=" + completedAt +
                 ", estimatedDelivery=" + estimatedDelivery +
                 ", createdByName=" + createdByName +
