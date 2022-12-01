@@ -9,5 +9,6 @@
 .DS_Store
 .project
 .classpath
+.vscode
 
 docker.env
