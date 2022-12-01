@@ -88,6 +88,9 @@ public class NotificationTest {
         String id = UUID.randomUUID().toString();
         content.addProperty("id", id);
         content.addProperty("reference", "client_reference");
+        content.addProperty("provider_reference", "provider_reference");
+        content.add("scheduled_for", null);
+        content.addProperty("sent_by", "sent_by");
         content.add("email_address", null);
         content.addProperty("phone_number", "+447111111111");
         content.add("line_1", null);
@@ -127,6 +130,9 @@ public class NotificationTest {
         Notification notification = gsonInstance.fromJson(content.toString(), Notification.class);
         assertEquals(UUID.fromString(id), notification.getId());
         assertEquals(Optional.of("client_reference"), notification.getReference());
+        assertEquals(Optional.of("provider_reference"), notification.getProviderReference());
+        assertEquals(Optional.of("sent_by"), notification.getSentBy());
+        assertEquals(Optional.<String>empty(), notification.getScheduledFor());
         assertEquals(UUID.fromString(templateId), notification.getTemplateId());
         assertEquals("sms", notification.getNotificationType());
 
