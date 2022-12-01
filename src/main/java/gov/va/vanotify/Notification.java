@@ -28,6 +28,7 @@ public class Notification {
     private String postage;
     @SerializedName("type")
     private String notificationType;
+    private String providerReference;
     private String status;
     private TemplateDTO template;
     private String body;
@@ -85,6 +86,10 @@ public class Notification {
     }
     public Optional<String> getPostage() {
         return Optional.ofNullable(postage);
+    }
+
+    public Optional<String> getProviderReference() {
+        return Optional.ofNullable(providerReference);
     }
 
     public String getNotificationType() {
@@ -156,6 +161,7 @@ public class Notification {
                 ", line5='" + line5 + '\'' +
                 ", line6='" + line6 + '\'' +
                 ", postcode='" + postcode + '\'' +
+                ", provider_reference ='" + providerReference + '\'' +
                 ", notificationType='" + notificationType + '\'' +
                 ", status='" + status + '\'' +
                 ", templateId=" + this.getTemplateId() +
