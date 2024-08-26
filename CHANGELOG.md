@@ -1,3 +1,6 @@
+## 2.0.2
+* Renamed default branch from 'master' to 'main'
+
 ## 2.0.0
 * Added GSON library as dependency 
 * Refactored all JSON serialization and deserialization to use GSON
