@@ -4,7 +4,7 @@
     
     <groupId>gov.va.vanotify</groupId>
     <artifactId>vanotify-java-client</artifactId>
-    <version>2.0.1</version>
+    <version>2.0.2</version>
     <packaging>jar</packaging>
     
     <name>VANotify Java client</name>
@@ -30,7 +30,7 @@
     <scm>
         <connection>scm:git:git://github.com/department-of-veterans-affairs/notifications-java-client.git</connection>
         <developerConnection>scm:git:ssh://github.com/department-of-veterans-affairs/notifications-java-client.git</developerConnection>
-        <url>http://github.com/department-of-veterans-affairs/notifications-java-client/tree/master</url>
+        <url>http://github.com/department-of-veterans-affairs/notifications-java-client/tree/main</url>
     </scm>
     
     <properties>

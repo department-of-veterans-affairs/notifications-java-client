@@ -6,5 +6,5 @@ Useful links:
 
 - [Documentation](https://docs.notifications.service.gov.uk/java.html)
 - [Artifact repository](https://github.com/department-of-veterans-affairs/notifications-java-client/packages/990487)
-- [Changelog](https://github.com/department-of-veterans-affairs/notifications-java-client/blob/master/CHANGELOG.md)
-- [Contributing to this client](https://github.com/department-of-veterans-affairs/notifications-java-client/blob/master/CONTRIBUTING.md)
+- [Changelog](https://github.com/department-of-veterans-affairs/notifications-java-client/blob/main/CHANGELOG.md)
+- [Contributing to this client](https://github.com/department-of-veterans-affairs/notifications-java-client/blob/main/CONTRIBUTING.md)
