@@ -13,7 +13,7 @@ Go to the [VANotify Java client maven packages on github](https://maven.pkg.gith
 1. Select the most recent version.
 1. Copy the dependency configuration snippet for your build tool.
 
-Refer to the [client changelog](https://github.com/department-of-veterans-affairs/notifications-java-client/blob/master/CHANGELOG.md) for the version number and the latest updates.
+Refer to the [client changelog](https://github.com/department-of-veterans-affairs/notifications-java-client/blob/main/CHANGELOG.md) for the version number and the latest updates.
 
 ### Create a new instance of the client
 

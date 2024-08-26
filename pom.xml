@@ -30,7 +30,7 @@
     <scm>
         <connection>scm:git:git://github.com/department-of-veterans-affairs/notifications-java-client.git</connection>
         <developerConnection>scm:git:ssh://github.com/department-of-veterans-affairs/notifications-java-client.git</developerConnection>
-        <url>http://github.com/department-of-veterans-affairs/notifications-java-client/tree/master</url>
+        <url>http://github.com/department-of-veterans-affairs/notifications-java-client/tree/main</url>
     </scm>
     
     <properties>
