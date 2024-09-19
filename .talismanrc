@@ -11,3 +11,5 @@ fileignoreconfig:
     checksum: 323123730ee2f17933378afe5b18fab56c0a0c54735f406d94b364c60746f71a
   - filename: src/main/java/gov/va/vanotify/SmsRequest.java
     checksum: 0af6b5128d3d404ff4f0e053882e2f5a36a3b1d27ca001d91ef5cda72170c541
+  - filename: .env.example
+    checksum: 56152582ae8d7879efa5826e72705a6e55ed8024dadf65acafaad45300a3ce37

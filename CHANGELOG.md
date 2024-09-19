@@ -1,3 +1,6 @@
+## 2.0.3
+* Upgraded the jose4j and gson dependency versions
+
 ## 2.0.2
 * Renamed default branch from 'master' to 'main'
 

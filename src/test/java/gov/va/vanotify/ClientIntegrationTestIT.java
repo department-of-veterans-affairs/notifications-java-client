@@ -28,6 +28,7 @@ public class ClientIntegrationTestIT {
         assertNotification(notification);
     }
 
+    @Disabled("The service does not have any SMS senders.")
     @Test
     public void testSmsNotificationIT() throws NotificationClientException {
         NotificationClient client = getClient();
@@ -36,8 +37,8 @@ public class ClientIntegrationTestIT {
         assertNotification(notification);
     }
 
-    @Test
     @Disabled
+    @Test
     public void testLetterNotificationIT() throws NotificationClientException {
         NotificationClient client = getClient();
         SendLetterResponse letterResponse = sendLetterAndAssertResponse(client);
@@ -48,6 +49,7 @@ public class ClientIntegrationTestIT {
     }
 
 
+    @Disabled("This test fails because the API Dev environment doesn't return any notifications.  This route is not exposed to users via Postman.")
     @Test
     public void testGetAllNotifications() throws NotificationClientException {
         NotificationClient client = getClient();
@@ -142,8 +144,8 @@ public class ClientIntegrationTestIT {
 
     }
 
-    @Test
     @Disabled
+    @Test
     public void testEmailNotificationWithUploadedDocumentInPersonalisation() throws NotificationClientException, IOException {
         NotificationClient client = getClient();
         HashMap<String, Object> personalisation = new HashMap<>();
@@ -214,6 +216,7 @@ public class ClientIntegrationTestIT {
         }
     }
 
+    @Disabled("The service does not have any SMS senders.")
     @Test
     public void testSmsNotificationWithValidSmsSenderIdIT() throws NotificationClientException {
         NotificationClient client = getClient("API_SENDING_KEY");
@@ -260,7 +263,7 @@ public class ClientIntegrationTestIT {
             );
         } catch (final NotificationClientException ex) {
             exceptionThrown = true;
-            assertTrue(ex.getMessage().contains("does not exist in database for service id"));
+            assertTrue(ex.getMessage().contains("does not exist in database for service id"), ex.getMessage());
         }
 
         assertTrue(exceptionThrown);
@@ -273,6 +276,7 @@ public class ClientIntegrationTestIT {
         };
     }
 
+    @Disabled("The service does not have any SMS senders.")
     @ParameterizedTest
     @MethodSource("smsWithRecipientIdentifierTestData")
     public void testSmsNotificationWithRecipientIdentifier(String phoneNumber) throws NotificationClientException {
@@ -317,8 +321,8 @@ public class ClientIntegrationTestIT {
         assertEquals(response.getNotificationId(), notifications.getNotifications().get(0).getId());
     }
 
-    @Test
     @Disabled
+    @Test
     public void testGetTemplateById() throws NotificationClientException {
         NotificationClient client = getClient();
         Template template = client.getTemplateById(System.getenv("LETTER_TEMPLATE_ID"));
@@ -365,8 +369,8 @@ public class ClientIntegrationTestIT {
         assertTrue(template.getBody().contains(uniqueName));
     }
 
-    @Test
     @Disabled
+    @Test
     public void testGetReceivedTextMessages() throws NotificationClientException {
         NotificationClient client = getClient("INBOUND_SMS_QUERY_KEY");
 
@@ -376,8 +380,8 @@ public class ClientIntegrationTestIT {
         testGetReceivedTextMessagesWithOlderThanId(receivedTextMessage.getId(), client);
     }
 
-    @Test
     @Disabled
+    @Test
     public void testSendPrecompiledLetterValidPDFFileIT() throws Exception {
         String reference = UUID.randomUUID().toString();
 
@@ -390,8 +394,8 @@ public class ClientIntegrationTestIT {
         assertPdfResponse(client, response.getNotificationId().toString());
     }
 
-    @Test
     @Disabled
+    @Test
     public void testSendPrecompiledLetterValidPDFFileITWithPostage() throws Exception {
         String reference = UUID.randomUUID().toString();
 
@@ -404,8 +408,8 @@ public class ClientIntegrationTestIT {
 
     }
 
-    @Test
     @Disabled
+    @Test
     public void testSendPrecompiledLetterWithInputStream() throws Exception {
         String reference = UUID.randomUUID().toString();
 
@@ -419,8 +423,8 @@ public class ClientIntegrationTestIT {
 
     }
 
-    @Test
     @Disabled
+    @Test
     public void testSendPrecompiledLetterWithInputStreamWithPostage() throws Exception {
         String reference = UUID.randomUUID().toString();
 
@@ -601,7 +605,7 @@ public class ClientIntegrationTestIT {
     }
 
     private void assertNotificationWhenSms(Notification notification) {
-        assertTrue(notification.getPhoneNumber().isPresent());
+        assertTrue(notification.getPhoneNumber().isPresent(), notification.toString());
         assertFalse(notification.getSubject().isPresent());
         assertFalse(notification.getEmailAddress().isPresent());
         assertFalse(notification.getLine1().isPresent());
