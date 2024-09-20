@@ -85,7 +85,7 @@ Make sure that `CHANGELOG.md` is updated with description of changes.
 
 Create a tag with the new version:
 ```shell
-git tag 1.2.0
+git tag 2.0.3
 git push --tags
 ```
 
